@@ -1,0 +1,26 @@
+{
+  "name": "daft",
+  "version": "0.0.1",
+  "homepage": "http://daftjs.com",
+  "authors": [
+    "Jesse Weed <jesse@jesseweed.com>"
+  ],
+  "description": "An isomorphic JavaScript framework.",
+  "main": "dist/daft.js",
+  "keywords": [
+    "daft",
+    "js",
+    "javascript",
+    "isomorphic",
+    "framework"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "bin",
+    "gulpfile.js",
+    "node_modules",
+    "bower_components",
+    "test",
+  ]
+}
