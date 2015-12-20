@@ -1,0 +1,39 @@
+{
+  "name": "daft",
+  "version": "0.0.1",
+  "description": "Daft javascript framework",
+  "license": "MIT",
+  "main": "daft.js",
+  "scripts": {
+    "vet": "gulp vet"
+  },
+  "keywords": [
+    "daft",
+    "js",
+    "javascript",
+    "isomorphic"
+  ],
+  "homepage": "http://daftjs.co",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daftjs/daft.git"
+  },
+  "bugs": {
+    "url": "https://github.com/daftjs/daft/issues"
+  },
+  "author": {
+    "name": "Jesse Weed",
+    "email": "jesse@jesseweed.com",
+    "url": "http://jesseweed.com"
+  },
+  "pre-push": [
+    "vet"
+  ],
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.1.1",
+    "gulp-jsdoc": "^0.1.5",
+    "pre-push": "^0.1.1",
+    "require-dir": "^0.3.0"
+  }
+}
