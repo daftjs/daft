@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "daft.js",
   "scripts": {
-    "vet": "gulp vet"
+    "test": "gulp vet"
   },
   "keywords": [
     "daft",
@@ -27,7 +27,7 @@
     "url": "http://jesseweed.com"
   },
   "pre-push": [
-    "vet"
+    "test"
   ],
   "devDependencies": {
     "gulp": "^3.9.0",
