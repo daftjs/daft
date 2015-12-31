@@ -40,15 +40,26 @@ gulp.task('concat', function () {
       .pipe(gulp.dest('./public/js/'))
 })
 
+gulp.task('minify', function () {
+  console.log('running gulp task: concat')
+  gulp.src('public/js/daft.js')
+      .pipe(babel({
+        presets: ['es2015']
+      }))
+      .pipe(gulp.dest('./dist/'))
+      .pipe(uglify())
+      .pipe(rename('daft.min.js'))
+      .pipe(gulp.dest('./dist/'))
+})
+
 gulp.task('webpack', function (callback) {
   // run webpack
   webpack(require('../../webpack.config.js'), function (err, stats) {
     if (err) throw new gutil.PluginError('webpack', err)
     gutil.log('[webpack]', stats.toString({
-      // output options
     }))
     callback()
   })
 })
 
-gulp.task('build', ['webpack'])
+gulp.task('build', ['webpack', 'minify'])

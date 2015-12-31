@@ -59,7 +59,7 @@ var Daft =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var DaftJS = (function () {
-	  function DaftJS(config) {
+	  function DaftJS() {
 	    _classCallCheck(this, DaftJS);
 
 	    var self = this;
@@ -71,7 +71,7 @@ var Daft =
 	      minor: '1',
 	      dot: '0'
 	    };
-	    self.config = config ? config : {
+	    self.config = {
 	      logging: {
 	        console: true,
 	        file: false

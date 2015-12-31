@@ -1,2 +1,2 @@
 // RUN TESTS
-require('gulp').task('test', ['lint']);
+require('gulp').task('test', ['lint'])

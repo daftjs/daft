@@ -27,5 +27,4 @@ gulp.task('serve', ['css', 'js'], function () {
 
   gulp.watch('./public/css/*.scss', ['sass'])
   gulp.watch('./public/**/*.html').on('change', browserSync.reload)
-
 })
