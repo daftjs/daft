@@ -84,7 +84,7 @@ var Daft =
 
 			self.version = {
 				codename: 'apple jack',
-				full: '0.1.0',
+				full: '0.1.1',
 				major: '0',
 				minor: '1',
 				dot: '0'
@@ -2592,9 +2592,9 @@ var Daft =
 				};
 
 				// OVERRIDE HTML WITH USER PROVIDED VALUE
-				if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop] !== 'undefined') {
-					Dom(element).html(userData.domData[prop]);
-					self.domData[prop].data = userData.domData[prop];
+				if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop].data !== 'undefined') {
+					Dom(element).html(userData.domData[prop].data);
+					self.domData[prop].data = userData.domData[prop].data;
 					self.domData[prop].previous = value;
 				} else {
 					self.domData[prop] = value;
