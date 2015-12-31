@@ -1,6 +1,6 @@
 class DaftJS {
 
-  constructor (config) {
+  constructor () {
     var self = this
 
     self.version = {
@@ -10,7 +10,7 @@ class DaftJS {
       minor: '1',
       dot: '0'
     }
-    self.config = config ? config : {
+    self.config = {
       logging: {
         console: true,
         file: false
