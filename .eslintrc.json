@@ -8,9 +8,12 @@
   },
   "env": {
     "es6": true,
-    "browser": true
+    "browser": true,
+    "node": true
   },
   "globals": {
+    "Daft": true,
+    "module": true,
     "require": true
   },
   "extends": "eslint:recommended"

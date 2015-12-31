@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Daft.js</title>
+    <link rel="stylesheet" href="/css/daft.css">
+    <script src="lib/require.js"></script>
+  </head>
+  <body>
+
+    <section namespace="header">
+      <h1 contentEditable="true" header-data="title" daft-update="updater(this)">Daft.js</h1>
+    </section>
+
+    <section namespace="content">
+      <p content-data="message" contentEditable="true"></p>
+    </section>
+
+    <script src="js/daft.js"></script>
+
+    <script>
+      requirejs(['js/header.js']);
+      requirejs(['js/content.js']);
+    </script>
+
+
+  </body>
+</html>

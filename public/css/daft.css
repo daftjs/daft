@@ -1,0 +1,13 @@
+* {
+  font-weight: 400; }
+
+body, html {
+  background: #fff;
+  font-family: 'helvetica neue', helvetica, arial; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 100;
+  margin: 0px; }
+
+p {
+  margin: 0px 0px 10px 0px; }
