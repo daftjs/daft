@@ -1,12 +1,12 @@
 window.define(function (require) {
-  return new window.Daft.Namespace('content', {
+  return new window.Daft.Namespace('header', {
     domData: {
-      title: 'Welcome to Daft.js!',
-      subtitle: 'page loaded'
-    },
-    onUpdate: function () {
-      console.log('Page header was updated', arguments)
+      title: {
+        data: 'Welcome to Daft.js!'
+      },
+      subtitle: {
+        data: 'page loaded'
+      }
     }
-
   })
 })

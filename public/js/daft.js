@@ -2520,9 +2520,9 @@ var Daft =
 	      };
 
 	      // OVERRIDE HTML WITH USER PROVIDED VALUE
-	      if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop] !== 'undefined') {
-	        Dom(element).html(userData.domData[prop]);
-	        self.domData[prop].data = userData.domData[prop];
+	      if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop].data !== 'undefined') {
+	        Dom(element).html(userData.domData[prop].data);
+	        self.domData[prop].data = userData.domData[prop].data;
 	        self.domData[prop].previous = value;
 	      } else {
 	        self.domData[prop] = value;
@@ -2534,6 +2534,22 @@ var Daft =
 	      });
 	    });
 	  }
+
+	  self.onUpdate = function (data) {
+	    // console.log('Page header was updated', arguments)
+	    // console.log('done')
+	    // console.log('namespace: ' + self.namespace)
+	    // Dom(data.el).html('faskjghsdfjg')
+	    console.log(data);
+
+	    self.domData[data.key].data = data.data;
+	    self.domData[data.key].previous = data.previous;
+
+	    setTimeout(function () {
+	      console.log('populate dom');
+	      // populateDomData()
+	    }, 1000);
+	  };
 
 	  self.container = Dom('[namespace="' + namespace + '"]')[0];
 
@@ -2942,6 +2958,9 @@ var Daft =
 	    var mutationLevel = null;
 	    var namespace = null;
 
+	    console.log('target');
+	    console.log(target);
+
 	    // DIRECT CHILD (LIKELY ONLY TEXT WAS UPDATED)
 	    if (typeof target.parentElement.attributes.namespace !== 'undefined') {
 	      mutationLevel = 'child';
@@ -3004,7 +3023,10 @@ var Daft =
 	  function checkAttributes(mutation, NS) {
 	    // CHECK FOR data-namespace ATTRIBUTE ON ELEMENT
 
+	    var dataKey = null;
 	    var updateFunction = null;
+
+	    console.log('mutation', mutation);
 
 	    if (NS.mutation === 'child') {
 	      // IF THIS IS A CHILD ELEMENT OF THE NAMESPACED CONTAINER (SHOULD ALMOST ALWAYS BE THE CASE)
@@ -3014,15 +3036,18 @@ var Daft =
 	        // IF DAFT-UPDATE ATTRUBUTE IF FOUND ON CONTAINER
 	        if (typeof mutation.target.parentElement.attributes['daft-update'] !== 'undefined') {
 	          updateFunction = mutation.target.parentElement.attributes['daft-update'].value;
+	          dataKey = mutation.target.parentElement.attributes[NS.namespace.namespace + '-data'].value;
 	        }
 	        // IF DOM NODES HAVE BEEN UPDATED
 	      } else if (mutation.type === 'childList') {
 	          // IF DAFT-UPDATE ATTRUBUTE IF FOUND ON CONTAINER
 	          if (typeof mutation.target.parentElement.attributes['daft-update'] !== 'undefined') {
 	            updateFunction = mutation.target.parentElement.attributes['daft-update'].value;
+	            dataKey = mutation.target.parentElement.attributes[NS.namespace.namespace + '-data'].value;
 	            // IF DAFT-UPDATE ATTRUBUTE IF FOUND ON PARENT CONTAINER
 	          } else if (typeof mutation.target.parentElement.parentElement.attributes['daft-update'] !== 'undefined') {
 	              updateFunction = mutation.target.parentElement.parentElement.attributes['daft-update'].value;
+	              dataKey = mutation.target.parentElement.parentElement.attributes[NS.namespace.namespace + '-data'].value;
 	            }
 	        }
 
@@ -3040,21 +3065,25 @@ var Daft =
 	      if (updateFunction.run !== false) {
 	        var updateData = {
 	          el: mutation.target.parentElement,
-	          data: mutation.oldValue,
-	          previous: mutation.target.nodeValue
+	          data: mutation.target.nodeValue,
+	          key: dataKey,
+	          previous: mutation.oldValue,
+	          mutation: mutation
 	        };
 
-	        updateFunction.arguments.unshift(updateData);
+	        if (updateFunction.arguments !== null) {
+	          updateFunction.arguments.unshift(updateData);
 
-	        updateFunction.arguments.forEach(function (value, key) {
-	          if (value === 'this') {
-	            if (NS.mutation === 'child') {
-	              updateFunction.arguments[key] = mutation.target.parentElement;
-	            } else {
-	              updateFunction.arguments[key] = mutation.target;
+	          updateFunction.arguments.forEach(function (value, key) {
+	            if (value === 'this') {
+	              if (NS.mutation === 'child') {
+	                updateFunction.arguments[key] = mutation.target.parentElement;
+	              } else {
+	                updateFunction.arguments[key] = mutation.target;
+	              }
 	            }
-	          }
-	        });
+	          });
+	        }
 
 	        updateFunction.run.apply(this, updateFunction.arguments);
 	      }
