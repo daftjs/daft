@@ -8,13 +8,15 @@ class Namespace {
     var Watcher = require('./watcher')([namespace + '-data'])
     var self = this
 
-    if (typeof userData.update === 'function') {
-      self.update = userData.update
-    }
+    userData = userData || {}
 
     // ADD USER DATA TO NAMESPACE
     for (var key in userData) {
       self[key] = userData[key]
+    }
+
+    if (typeof userData.update !== 'undefined' && typeof userData.update === 'function') {
+      self.update = userData.update
     }
 
     // POPULAR DOM DATA OBJECT BASED ON namespace-data OBJECTS
@@ -31,7 +33,7 @@ class Namespace {
         }
 
         // OVERRIDE HTML WITH USER PROVIDED VALUE
-        if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop].data !== 'undefined') {
+        if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop] !== 'undefined') {
           Dom(element).html(userData.domData[prop].data)
           self.domData[prop].data = userData.domData[prop].data
           self.domData[prop].previous = value
@@ -47,19 +49,9 @@ class Namespace {
     }
 
     self.onUpdate = function (data) {
-      // console.log('Page header was updated', arguments)
-      // console.log('done')
-      // console.log('namespace: ' + self.namespace)
-      // Dom(data.el).html('faskjghsdfjg')
-      console.log(data)
-
       self.domData[data.key].data = data.data
       self.domData[data.key].previous = data.previous
-
-      setTimeout(function () {
-        console.log('populate dom')
-        // populateDomData()
-      }, 1000)
+      // populateDomData()
     }
 
     self.container = Dom('[namespace="' + namespace + '"]')[0]
