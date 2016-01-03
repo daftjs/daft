@@ -1,11 +1,13 @@
 # Daft
-[![Join the chat at https://gitter.im/daftjs/daft](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/daftjs/daft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![npm version](https://badge.fury.io/js/daft.svg)](https://badge.fury.io/js/daft)
-[![Build Status](https://travis-ci.org/daftjs/daft.svg?branch=master)](https://travis-ci.org/daftjs/daft)
-[![Bower](https://img.shields.io/bower/v/daft.svg)](http://)
+[![Gitter](https://img.shields.io/gitter/room/daftjs/daft.svg?style=flat-square)](https://gitter.im/daftjs/daft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![npm](https://img.shields.io/npm/v/daft.svg?style=flat-square)](https://www.npmjs.com/package/daft)
+[![Travis](https://img.shields.io/travis/daftjs/daft.svg?style=flat-square)](https://travis-ci.org/daftjs/daft)
+[![Bower](https://img.shields.io/bower/v/daft.svg?style=flat-square)]()
+[![Gemnasium](https://img.shields.io/gemnasium/daftjs/daft.svg?style=flat-square)](https://gemnasium.com/daftjs/daft)
+[![npm downloads](https://img.shields.io/npm/dt/daft.svg?style=flat-square)]()
 
 
-An uber-modern, probably wont work in your mum's browser, isomorphic-frieldly JavaScript framework.
+An uber-modern, probably wont work in your mum's browser, isomorphic-friendly JavaScript framework.
 
 [ WIP ]
 
@@ -15,7 +17,7 @@ An uber-modern, probably wont work in your mum's browser, isomorphic-frieldly Ja
 ##### BOWER
 `bower install daft`
 
-##### ^ Do not do this yet as it will probably break and make you cry.
+##### ^ Do not do any of this yet as it will probably break and make you cry.
 
 ---
 
@@ -23,7 +25,7 @@ An uber-modern, probably wont work in your mum's browser, isomorphic-frieldly Ja
 
 *^ This is a bad name for this and will probably change.*
 
-The first thing you will want to do is create a namespace for an area of your app. Think of this similar to controlloers in Angular. For example:
+The first thing you will want to do is create a namespace for an area of your app. Think of this similar to controllers in Angular. For example:
 
 ##### JS
 ```
@@ -64,7 +66,7 @@ With this, you would see the following output to the browser on page load:
 ```
 
 #### Dom Data
-You may have noticed in the JS example that we set a `domData.status` value of "Page loaded!" in our headSpace class. Since our h4 had an attirbute of `headSpace-data="status"`, the 2 became joined at the hip, and daft knew to replace the default text of "waiting for something to happen..." with "Page loaded!".
+You may have noticed in the JS example that we set a `domData.status` value of "Page loaded!" in our headSpace class. Since our h4 had an attribute of `headSpace-data="status"`, the 2 became joined at the hip, and daft knew to replace the default text of "waiting for something to happen..." with "Page loaded!".
 
 The neat thing here, is that the `domData` values are set on page load based on the html of the element. So you can easily set your initial data on the server, and Daft will take care of mapping everything for you. Our h1 also has a `headSpace-data` value of "title", which which means it's automatically available to you as `headSpace.domData.title.data` as soon as the dom has loaded.
 
