@@ -33,7 +33,7 @@ module.exports = function (attrs) {
       container: parent,
       namespace: namespace,
       attributes: attributes
-    }  
+    }
   }
 
   function getAttrs (el) {
