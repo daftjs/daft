@@ -1,6 +1,6 @@
 {
   "name": "daft",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Daft javascript framework",
   "license": "MIT",
   "main": "daft.js",
@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "domtastic": "^0.11.2",
-    "pre-push": "^0.1.1",
+    "pre-push": "^0.1.2",
     "watchjs": "0.0.0"
   }
 }
