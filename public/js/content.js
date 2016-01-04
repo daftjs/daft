@@ -3,10 +3,13 @@ window.define(function (require) {
     domData: {
       message: {
         data: 'Isomorphic Javascript framework'
+      },
+      other: {
+        data: true
       }
     },
     onUpdate: function () {
-      console.log('Content areas was updated', arguments)
+      // console.log('Content areas was updated', arguments)
     }
 
   })

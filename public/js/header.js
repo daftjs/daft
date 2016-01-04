@@ -6,9 +6,9 @@ window.define(function (require) {
       }
     },
     onUpdate: function (data) {
-      if (data.data.toLowerCase() === 'yo') {
-        window.alert('gabba gabba!')
-      }
+      // if (data.data.toLowerCase() === 'yo') {
+      //   window.alert('gabba gabba!')
+      // }
     }
   })
 })

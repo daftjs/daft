@@ -1,6 +1,6 @@
 {
   "name": "daft",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Daft javascript framework",
   "license": "MIT",
   "main": "daft.js",
@@ -43,7 +43,7 @@
     "browser-sync": "^2.10.1",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.1",
-    "gulp-jsdoc": "^0.1.5",
+    "gulp-jsdoc": "^0.1.6",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.1.1",
     "gulp-standard": "^5.2.2",
@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "domtastic": "^0.11.2",
-    "pre-push": "^0.1.5",
+    "pre-push": "^0.1.6",
     "watchjs": "0.0.0"
   }
 }
