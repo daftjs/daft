@@ -43,9 +43,9 @@ class Namespace {
           self.domData[prop] = value
         }
 
-        // UPDATE ELEMENT IF DATA CHANGES
+        // IF OBJECT CHANGES
         watch(self.domData[prop], function () {
-          Dom(element).html(this.data)
+          Daft.dom('[header-data="' + prop + '"]').html(this.data)
         })
       })
     }

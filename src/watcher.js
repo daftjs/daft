@@ -17,15 +17,23 @@ module.exports = function (attrs) {
   }
 
   function getNameSpace (mutation) {
-  // GET ELEMENTS NAMESPACE
+  //
 
-    var parent = Daft.dom(mutation.target.parentElement)[0].closest('[namespace]')
+    var attributes = null
+    var namespace = null
+    var parent = null
+
+    if (Daft.dom(mutation.target.parentElement).length > 0) {
+      parent = Daft.dom(mutation.target.parentElement)[0].closest('[namespace]')
+      namespace = namespaceExists(parent.attributes.namespace.value)
+      attributes = getAttrs(mutation)
+    }
 
     return {
       container: parent,
-      namespace: namespaceExists(parent.attributes.namespace.value),
-      attributes: getAttrs(mutation)
-    }
+      namespace: namespace,
+      attributes: attributes
+    }  
   }
 
   function getAttrs (el) {
@@ -120,6 +128,9 @@ module.exports = function (attrs) {
 
           // APPLY FUNCTION
           if (typeof updateFunction.run === 'function') updateFunction.run.apply(this, updateFunction.arguments)
+
+          // UPDATE OBJECT WITH NEW VALUE
+          Daft.NS[NS.namespace.namespace].domData[dataKey].data = mutation.target.nodeValue
         }
       }
     }
