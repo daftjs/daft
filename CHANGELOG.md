@@ -1,3 +1,8 @@
+## v0.1.7
++ Bower should only publish dist folder
++ Cleanup unused files
++ Update README with codepen link
+
 ## v0.1.6
 + Fix bug where data only updates when daft-update exists
 + Remove hard-coded namespace
