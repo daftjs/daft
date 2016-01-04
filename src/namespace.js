@@ -23,7 +23,7 @@ class Namespace {
       self.domData = {}
 
       // GRAB ALL namespace-data ELEMENTS & APPEND TO DOM DATA
-      Dom('[namespace="' + namespace + '"]').children('[' + namespace + '-data]').forEach(function (element) {
+      Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]').forEach(function (element) {
         var prop = element.attributes[namespace + '-data'].value
         var value = element.innerHTML
 
