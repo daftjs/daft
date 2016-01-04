@@ -1,3 +1,5 @@
+// WATCHES OUR NAMESPACE AND REPORT ON ANY CHANGES
+
 module.exports = function (attrs) {
   var MutationObserver = MutationObserver || window.MutationObserver
   var Daft = Daft || window.Daft
@@ -21,11 +23,8 @@ module.exports = function (attrs) {
     var mutationLevel = null
     var namespace = null
 
-    console.log('target')
-    console.log(target)
-
     // DIRECT CHILD (LIKELY ONLY TEXT WAS UPDATED)
-    if (typeof target.parentElement.attributes.namespace !== 'undefined') {
+    if (target.parentElement !== null && typeof target.parentElement.attributes.namespace !== 'undefined') {
       mutationLevel = 'child'
       namespace = target.parentElement.attributes.namespace.value
     // GRAND CHILD (LIKELY DOME STRUCTURE WAS UPDATED)
@@ -33,10 +32,9 @@ module.exports = function (attrs) {
       mutationLevel = 'child'
       namespace = target.parentElement.parentElement.attributes.namespace.value
     // PARENT: ENTIRE DOM OF NAMESPACE HAS CHANGED, ASSUME ALL DATA IS NOW OUT OF DATE
-    } else if (typeof target.attributes.namespace !== 'undefined') {
+    } else if (typeof target.attributes !== 'undefined' && typeof target.attributes.namespace !== 'undefined') {
       mutationLevel = 'parent'
       namespace = target.attributes.namespace.value
-
       // UPDATE ALL DATA FOR NAMESPACE
       Daft.NS[namespace].actions.updateData(mutation)
     }
@@ -87,8 +85,6 @@ module.exports = function (attrs) {
 
     var dataKey = null
     var updateFunction = null
-
-    console.log('mutation', mutation)
 
     if (NS.mutation === 'child') {
     // IF THIS IS A CHILD ELEMENT OF THE NAMESPACED CONTAINER (SHOULD ALMOST ALWAYS BE THE CASE)
@@ -147,7 +143,8 @@ module.exports = function (attrs) {
           })
         }
 
-        updateFunction.run.apply(this, updateFunction.arguments)
+        // APPLY FUNCTION
+        if (typeof updateFunction === 'function') updateFunction.run.apply(this, updateFunction.arguments)
       }
     }
   }
