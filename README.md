@@ -21,6 +21,11 @@ An uber-modern, probably wont work in your mum's browser, isomorphic-friendly Ja
 
 ---
 
+## Try it out
+[http://codepen.io/anon/pen/YwNORz](http://codepen.io/anon/pen/YwNORz)
+
+---
+
 ## Namespaces
 
 *^ This is a bad name for this and will probably change.*
