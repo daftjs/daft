@@ -1,6 +1,6 @@
 {
   "name": "daft",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "homepage": "http://daftjs.com",
   "authors": [
     "Jesse Weed <jesse@jesseweed.com>"
@@ -18,9 +18,12 @@
   "ignore": [
     "**/.*",
     "bin",
+    "bower_components",
+    "docs",
     "gulpfile.js",
     "node_modules",
-    "bower_components",
+    "public",
+    "src",
     "test"
   ]
 }
