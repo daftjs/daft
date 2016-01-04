@@ -26,7 +26,7 @@ module.exports = function (attrs) {
     if (Daft.dom(mutation.target.parentElement).length > 0) {
       parent = Daft.dom(mutation.target.parentElement)[0].closest('[namespace]')
       namespace = namespaceExists(parent.attributes.namespace.value)
-      attributes = getAttrs(mutation)
+      attributes = getAttrs(mutation, namespace)
     }
 
     return {
@@ -36,10 +36,11 @@ module.exports = function (attrs) {
     }
   }
 
-  function getAttrs (el) {
+  function getAttrs (el, namespace) {
   // GET ATTRIBUTES OF PARENT ELEMENT
 
-    el = Daft.dom(el.target.parentElement)[0].closest('[daft-update]')
+    el = Daft.dom(el.target.parentElement)[0].closest('[' + namespace.namespace + '-data]')
+
     if (typeof el !== 'undefined' && el !== null) {
       return el.attributes
     } else {
@@ -55,7 +56,7 @@ module.exports = function (attrs) {
     var obj = window.Daft.NS[NS.namespace.namespace]
 
     // IF ACTUAL FUNCTION WAS PASSED & NOT JUST A NAME OF A FUNCTION
-    if (fn.indexOf('(') > 0) {
+    if (fn !== null && fn.indexOf('(') > 0) {
       var fnSplit = fn.split('(')
       fn = fnSplit[0]
       args = fnSplit[1].split(')')[0].split(',')
@@ -128,12 +129,16 @@ module.exports = function (attrs) {
 
           // APPLY FUNCTION
           if (typeof updateFunction.run === 'function') updateFunction.run.apply(this, updateFunction.arguments)
-
-          // UPDATE OBJECT WITH NEW VALUE
-          Daft.NS[NS.namespace.namespace].domData[dataKey].data = mutation.target.nodeValue
         }
       }
     }
+
+    if (typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
+      dataKey = NS.attributes[NS.namespace.namespace + '-data'].value
+    }
+
+    // UPDATE OBJECT WITH NEW VALUE
+    Daft.NS[NS.namespace.namespace].domData[dataKey].data = mutation.target.nodeValue
   }
 
   var Watcher = new MutationObserver(function (mutations) {
