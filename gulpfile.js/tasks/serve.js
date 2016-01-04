@@ -25,6 +25,6 @@ gulp.task('serve', ['css', 'js'], function () {
     port: 1980
   })
 
-  gulp.watch('./public/css/*.scss', ['sass'])
+  gulp.watch('./public/css/*.scss', ['css'])
   gulp.watch('./public/**/*.html').on('change', browserSync.reload)
 })
