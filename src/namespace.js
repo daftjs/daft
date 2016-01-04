@@ -45,7 +45,7 @@ class Namespace {
 
         // IF OBJECT CHANGES
         watch(self.domData[prop], function () {
-          Daft.dom('[header-data="' + prop + '"]').html(this.data)
+          Daft.dom('[' + namespace + '-data="' + prop + '"]').html(this.data)
         })
       })
     }
