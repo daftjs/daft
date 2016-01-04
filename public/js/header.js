@@ -6,8 +6,8 @@ window.define(function (require) {
       }
     },
     onUpdate: function (data) {
-      if (data.data === 'blah') {
-        window.alert('hooya')
+      if (data.data.toLowerCase() === 'yo') {
+        window.alert('gabba gabba!')
       }
     }
   })

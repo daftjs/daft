@@ -84,10 +84,10 @@ var Daft =
 
 			self.version = {
 				codename: 'apple jack',
-				full: '0.1.3',
+				full: '0.1.4',
 				major: '0',
 				minor: '1',
-				dot: '2'
+				dot: '3'
 			};
 			self.config = {
 				logging: {
@@ -3008,32 +3008,26 @@ var Daft =
 		}
 
 		function getNameSpace(mutation) {
-			// TRY TO FIND NAME OF NAMESPACE FROM MUTATION EVENT
+			// GET ELEMENTS NAMESPACE
 
-			var target = mutation.target;
-			var mutationLevel = null;
-			var namespace = null;
-
-			// DIRECT CHILD (LIKELY ONLY TEXT WAS UPDATED)
-			if (target.parentElement !== null && typeof target.parentElement.attributes.namespace !== 'undefined') {
-				mutationLevel = 'child';
-				namespace = target.parentElement.attributes.namespace.value;
-				// GRAND CHILD (LIKELY DOME STRUCTURE WAS UPDATED)
-			} else if (typeof target.parentElement.parentElement.attributes.namespace !== 'undefined') {
-					mutationLevel = 'child';
-					namespace = target.parentElement.parentElement.attributes.namespace.value;
-					// PARENT: ENTIRE DOM OF NAMESPACE HAS CHANGED, ASSUME ALL DATA IS NOW OUT OF DATE
-				} else if (typeof target.attributes !== 'undefined' && typeof target.attributes.namespace !== 'undefined') {
-						mutationLevel = 'parent';
-						namespace = target.attributes.namespace.value;
-						// UPDATE ALL DATA FOR NAMESPACE
-						Daft.NS[namespace].actions.updateData(mutation);
-					}
+			var parent = Daft.dom(mutation.target.parentElement)[0].closest('[namespace]');
 
 			return {
-				namespace: namespaceExists(namespace),
-				mutation: mutationLevel
+				container: parent,
+				namespace: namespaceExists(parent.attributes.namespace.value),
+				attributes: getAttrs(mutation)
 			};
+		}
+
+		function getAttrs(el) {
+			// GET ATTRIBUTES OF PARENT ELEMENT
+
+			el = Daft.dom(el.target.parentElement)[0].closest('[daft-update]');
+			if (typeof el !== 'undefined' && el !== null) {
+				return el.attributes;
+			} else {
+				return null;
+			}
 		}
 
 		function checkFunction(fn, NS) {
@@ -3078,65 +3072,47 @@ var Daft =
 			var dataKey = null;
 			var updateFunction = null;
 
-			if (NS.mutation === 'child') {
-				// IF THIS IS A CHILD ELEMENT OF THE NAMESPACED CONTAINER (SHOULD ALMOST ALWAYS BE THE CASE)
-
-				// IF ONLY TEXT DATA HAS BEEN UPDATED
-				if (mutation.type === 'characterData') {
-					// IF DAFT-UPDATE ATTRUBUTE IF FOUND ON CONTAINER
-					if (typeof mutation.target.parentElement.attributes['daft-update'] !== 'undefined') {
-						updateFunction = mutation.target.parentElement.attributes['daft-update'].value;
-						dataKey = mutation.target.parentElement.attributes[NS.namespace.namespace + '-data'].value;
-					}
-					// IF DOM NODES HAVE BEEN UPDATED
-				} else if (mutation.type === 'childList') {
-						// IF DAFT-UPDATE ATTRUBUTE IF FOUND ON CONTAINER
-						if (typeof mutation.target.parentElement.attributes['daft-update'] !== 'undefined') {
-							updateFunction = mutation.target.parentElement.attributes['daft-update'].value;
-							dataKey = mutation.target.parentElement.attributes[NS.namespace.namespace + '-data'].value;
-							// IF DAFT-UPDATE ATTRUBUTE IF FOUND ON PARENT CONTAINER
-						} else if (typeof mutation.target.parentElement.parentElement.attributes['daft-update'] !== 'undefined') {
-								updateFunction = mutation.target.parentElement.parentElement.attributes['daft-update'].value;
-								dataKey = mutation.target.parentElement.parentElement.attributes[NS.namespace.namespace + '-data'].value;
-							}
-					}
-
-				// IF THIS IS THE NAMESPACED CONTAINER ITSELF
-			} else if (NS.mutation === 'parent') {
-					if (typeof mutation.target.attributes['daft-update'] !== 'undefined') {
-						updateFunction = mutation.target.attributes['daft-update'].value;
-					}
+			if (NS.attributes !== null) {
+				if (typeof NS.attributes['daft-update'] !== 'undefined') {
+					updateFunction = NS.attributes['daft-update'].value;
 				}
 
-			// IF AN UPDATE FUNCTION WAS PROVIDED
-			if (updateFunction !== null) {
-				updateFunction = checkFunction(updateFunction, NS);
+				if (typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
+					dataKey = NS.attributes[NS.namespace.namespace + '-data'].value;
+				}
 
-				if (updateFunction.run !== false) {
-					var updateData = {
-						el: mutation.target.parentElement,
-						data: mutation.target.nodeValue,
-						key: dataKey,
-						previous: mutation.oldValue,
-						mutation: mutation
-					};
+				// IF AN UPDATE FUNCTION WAS PROVIDED
+				if (typeof updateFunction !== 'undefined') {
+					updateFunction = checkFunction(updateFunction, NS);
 
-					if (updateFunction.arguments !== null) {
-						updateFunction.arguments.unshift(updateData);
+					// IF FUNCTION EXISTS & SHOULD BE RUN
+					if (updateFunction.run !== false) {
+						var updateData = {
+							el: mutation.target.parentElement,
+							data: mutation.target.nodeValue,
+							key: dataKey,
+							previous: mutation.oldValue,
+							mutation: mutation
+						};
 
-						updateFunction.arguments.forEach(function (value, key) {
-							if (value === 'this') {
-								if (NS.mutation === 'child') {
-									updateFunction.arguments[key] = mutation.target.parentElement;
-								} else {
-									updateFunction.arguments[key] = mutation.target;
+						// IF FUNCTION HAS ARGUMENTS
+						if (updateFunction.arguments !== null) {
+							updateFunction.arguments.unshift(updateData);
+
+							updateFunction.arguments.forEach(function (value, key) {
+								if (value === 'this') {
+									if (NS.mutation === 'child') {
+										updateFunction.arguments[key] = mutation.target.parentElement;
+									} else {
+										updateFunction.arguments[key] = mutation.target;
+									}
 								}
-							}
-						});
-					}
+							});
+						}
 
-					// APPLY FUNCTION
-					if (typeof updateFunction === 'function') updateFunction.run.apply(this, updateFunction.arguments);
+						// APPLY FUNCTION
+						if (typeof updateFunction.run === 'function') updateFunction.run.apply(this, updateFunction.arguments);
+					}
 				}
 			}
 		}
