@@ -66,10 +66,10 @@ var Daft =
 
 	    self.version = {
 	      codename: 'apple jack',
-	      full: '0.1.2',
+	      full: '0.1.3',
 	      major: '0',
 	      minor: '1',
-	      dot: '1'
+	      dot: '2'
 	    };
 	    self.config = {
 	      logging: {
@@ -2487,16 +2487,19 @@ var Daft =
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	// CREATES A NEW NAPESPACE
+
 	var Namespace = function Namespace(namespace, userData) {
 	  _classCallCheck(this, Namespace);
 
-	  var Daft = window.Daft;
+	  var Daft = Daft || window.Daft;
 	  var Dom = __webpack_require__(2);
 	  var WatchJS = __webpack_require__(24);
 	  var watch = WatchJS.watch;
 	  var Watcher = __webpack_require__(25)([namespace + '-data']);
 	  var self = this;
 
+	  // SET EMPTY OBJECT IF NOT PROVIDED
 	  userData = userData || {};
 
 	  // ADD USER DATA TO NAMESPACE
@@ -2504,18 +2507,16 @@ var Daft =
 	    self[key] = userData[key];
 	  }
 
-	  if (typeof userData.update !== 'undefined' && typeof userData.update === 'function') {
-	    self.update = userData.update;
-	  }
-
 	  // POPULAR DOM DATA OBJECT BASED ON namespace-data OBJECTS
 	  function populateDomData() {
 	    self.domData = {};
 
-	    Dom('[namespace="' + namespace + '"]').children('[' + namespace + '-data]').forEach(function (element) {
+	    // GRAB ALL namespace-data ELEMENTS & APPEND TO DOM DATA
+	    Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]').forEach(function (element) {
 	      var prop = element.attributes[namespace + '-data'].value;
 	      var value = element.innerHTML;
 
+	      // SET DEFAULT DATA
 	      self.domData[prop] = {
 	        data: value,
 	        previous: null
@@ -2526,9 +2527,10 @@ var Daft =
 	        Dom(element).html(userData.domData[prop].data);
 	        self.domData[prop].data = userData.domData[prop].data;
 	        self.domData[prop].previous = value;
+	        // FALLBACK TO DOM VALUE
 	      } else {
-	        self.domData[prop] = value;
-	      }
+	          self.domData[prop] = value;
+	        }
 
 	      // UPDATE ELEMENT IF DATA CHANGES
 	      watch(self.domData[prop], function () {
@@ -2537,20 +2539,25 @@ var Daft =
 	    });
 	  }
 
+	  // SET PARENT COMTAINER
 	  self.container = Dom('[namespace="' + namespace + '"]')[0];
 
+	  // SET NAMESPACE NAME
 	  self.namespace = namespace;
 
-	  // POPULATE DOM DATE
+	  // POPULATE DOM DATA
 	  populateDomData();
 
+	  // SET ACTIONS
 	  self.actions = {
 	    test: self.test,
 	    updateData: populateDomData
 	  };
 
+	  // ADD NAMESPACE TO NS OBJECT
 	  Daft.NS[namespace] = self;
 
+	  // WATCH FOR ANY DOM CHANGES
 	  self.observer = new Watcher.Observe(self.container);
 	};
 
@@ -2920,6 +2927,8 @@ var Daft =
 	'use strict';
 
 	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
+	// WATCHES OUR NAMESPACE AND REPORT ON ANY CHANGES
 
 	module.exports = function (attrs) {
 	  var MutationObserver = MutationObserver || window.MutationObserver;

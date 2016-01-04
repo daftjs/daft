@@ -5,10 +5,10 @@ class DaftJS {
 
     self.version = {
       codename: 'apple jack',
-      full: '0.1.2',
+      full: '0.1.3',
       major: '0',
       minor: '1',
-      dot: '2'
+      dot: '3'
     }
     self.config = {
       logging: {

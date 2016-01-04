@@ -22,7 +22,7 @@ gulp.task('serve', ['css', 'js'], function () {
       baseDir: './public/'
     },
     open: false,
-    port: 1981
+    port: 1980
   })
 
   gulp.watch('./public/css/*.scss', ['sass'])
