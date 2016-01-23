@@ -1,22 +1,24 @@
 {
   "name": "daft",
   "version": "0.2.0",
-  "description": "Daft javascript framework",
+  "description": "An isomorphic-friendly JavaScript framework.",
   "license": "MIT",
-  "main": "daft.js",
+  "main": "dist/daft.js",
   "scripts": {
     "test": "gulp test"
   },
   "keywords": [
     "daft",
-    "js",
-    "javascript",
-    "isomorphic"
+    "daft.js",
+    "daft js",
+    "framework",
+    "isomorphic",
+    "javascript"
   ],
   "homepage": "http://daftjs.co",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/daftjs/daft.git"
+    "url": "https://github.com/daftjs/daft.git"
   },
   "bugs": {
     "url": "https://github.com/daftjs/daft/issues"
@@ -30,14 +32,18 @@
     "node": "5.5.0",
     "npm": "3.3.12"
   },
-  "pre-push": [
-    "test"
-  ],
   "standard": {
     "globals": [
       "Daft",
       "define"
     ]
+  },
+  "pre-push": [
+    "test"
+  ],
+  "dependencies": {
+    "domtastic": "^0.11.2",
+    "watchjs": "0.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.4.5",
@@ -56,9 +62,5 @@
     "pre-push": "^0.1.1",
     "require-dir": "^0.3.0",
     "webpack": "^1.12.11"
-  },
-  "dependencies": {
-    "domtastic": "^0.11.2",
-    "watchjs": "0.0.0"
   }
 }
