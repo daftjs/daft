@@ -24,6 +24,9 @@
     "node_modules",
     "public",
     "src",
-    "test"
+    "test",
+    "package.json",
+    "webpack.config.js",
+    "CHANGELOG.md"
   ]
 }
