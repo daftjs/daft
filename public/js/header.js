@@ -1,14 +1,20 @@
 window.define(function (require) {
-  return new window.Daft.Namespace('header', {
+  var Daft = window.Daft
+
+  // SETUP OUR HEADER NAMESPACE
+  var Header = new Daft.Namespace('header', {
     domData: {
-      title: {
+      subtitle: {
         data: 'Hello Daft'
       }
     },
-    onUpdate: function (data) {
-      // if (data.data.toLowerCase() === 'yo') {
-      //   window.alert('gabba gabba!')
-      // }
+    onTitleUpdate: function () {
+      console.log('Header.onTitleUpdate()')
     }
+  })
+
+  // ONLOAD
+  Header.onload(function (err) {
+    if (!err) Daft.info('Header namespace loaded') // IF WE GET AN ERROR
   })
 })

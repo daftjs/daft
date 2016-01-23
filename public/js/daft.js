@@ -69,7 +69,7 @@ var Daft =
 	      full: '0.1.7',
 	      major: '0',
 	      minor: '1',
-	      dot: '6'
+	      dot: '7'
 	    };
 	    self.config = {
 	      logging: {
@@ -2485,81 +2485,205 @@ var Daft =
 
 	'use strict';
 
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	// CREATES A NEW NAPESPACE
 
-	var Namespace = function Namespace(namespace, userData) {
-	  _classCallCheck(this, Namespace);
+	var Namespace = (function () {
+	  function Namespace(namespace, userData, cb) {
+	    _classCallCheck(this, Namespace);
 
-	  var Daft = Daft || window.Daft;
-	  var Dom = __webpack_require__(2);
-	  var WatchJS = __webpack_require__(24);
-	  var watch = WatchJS.watch;
-	  var Watcher = __webpack_require__(25)([namespace + '-data']);
-	  var self = this;
+	    var Daft = Daft || window.Daft;
+	    var Dom = __webpack_require__(2);
+	    var WatchJS = __webpack_require__(24);
+	    var Watcher = __webpack_require__(25)([namespace + '-data']);
+	    var self = this;
 
-	  // SET EMPTY OBJECT IF NOT PROVIDED
-	  userData = userData || {};
+	    self.watch = WatchJS.watch;
 
-	  // ADD USER DATA TO NAMESPACE
-	  for (var key in userData) {
-	    self[key] = userData[key];
-	  }
+	    self.loaded = {
+	      attempts: 0, // HOW MANY TIMES WE'VE TRIED TO FIRE LOAD EVENT
+	      fail: 3000, // HOW MANY SECONDS TIL WE SHOULD GIVE UP
+	      refresh: 500, // HOW OFTEN TO RE-TRY
+	      success: false // WHETHER OR NOT WE'VE SUCCEEDED YET
+	    };
 
-	  // POPULAR DOM DATA OBJECT BASED ON namespace-data OBJECTS
-	  function populateDomData() {
-	    self.domData = {};
+	    // SET EMPTY OBJECT IF NOT PROVIDED
+	    userData = userData || {};
 
-	    // GRAB ALL namespace-data ELEMENTS & APPEND TO DOM DATA
-	    Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]').forEach(function (element) {
-	      var prop = element.attributes[namespace + '-data'].value;
-	      var value = element.innerHTML;
+	    // ADD USER DATA TO NAMESPACE
+	    for (var key in userData) {
+	      self[key] = userData[key];
+	    }
 
-	      // SET DEFAULT DATA
-	      self.domData[prop] = {
-	        data: value,
-	        previous: null
-	      };
+	    function watchData(scope, prop) {
+	      // WATCH FOR CHANGES TO NS OBJECT
+	      self.watch(scope.domData[prop], function () {
+	        // IF OBJECT CHANGES
+	        var self = this;
 
-	      // OVERRIDE HTML WITH USER PROVIDED VALUE
-	      if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop] !== 'undefined') {
-	        Dom(element).html(userData.domData[prop].data);
-	        self.domData[prop].data = userData.domData[prop].data;
-	        self.domData[prop].previous = value;
-	        // FALLBACK TO DOM VALUE
-	      } else {
-	          self.domData[prop] = value;
+	        Daft.dom('[' + namespace + '-data="' + prop + '"]').forEach(function (value, key) {
+	          if (typeof value.type !== 'undefined') {
+	            Daft.dom(value).val(self.data);
+	          } else {
+	            Daft.dom(value).html(self.data);
+	          }
+	        });
+	      });
+	    }
+
+	    // POPULAR DOM DATA OBJECT BASED ON namespace-data OBJECTS
+	    function populateDomData() {
+	      self.domData = {};
+
+	      var datas = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]');
+
+	      // GRAB ALL namespace-data ELEMENTS & APPEND TO DOM DATA
+	      datas.forEach(function (element, key) {
+	        var prop = element.attributes[namespace + '-data'].value;
+	        var qty = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data="' + prop + '"]').length;
+	        var value = '';
+
+	        if (qty === 1 || typeof element.attributes['data-init'] !== 'undefined') {
+	          if (typeof element.type !== 'undefined' && element.value !== '') value = element.value;
+	          if (typeof element.innerHTML !== 'undefined' && element.innerHTML !== '') value = element.innerHTML;
+
+	          self.domData[prop] = {
+	            data: value,
+	            previous: null
+	          };
 	        }
 
-	      // IF OBJECT CHANGES
-	      watch(self.domData[prop], function () {
-	        Daft.dom('[' + namespace + '-data="' + prop + '"]').html(this.data);
+	        // ON CHANGE EVENT FOR FORM ELEMENTS
+	        // TODO: REVISIT HOW THIS WORKS
+	        if (typeof element.type !== 'undefined') {
+	          element.addEventListener('input', function (e) {
+	            self.domData[prop].data = e.target.value;
+	            this.setSelectionRange(this.selectionStart, this.selectionEnd);
+	          });
+	        }
+
+	        if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop] !== 'undefined') {
+	          // OVERRIDE DOM DATA WITH JS DATA IF THE EXISTS
+
+	          if (typeof self.domData[prop] === 'undefined') {
+	            // CREATE DOM DATA FOR PROP IF IT DOESN'T EXIST
+	            self.domData[prop] = { data: '', previous: null };
+	          }
+
+	          // SET VALUE IF FORM FIELD
+	          if (typeof Dom(element)[0].type !== 'undefined') {
+	            Dom(element).val(userData.domData[prop].data);
+	          } else {
+	            // OTHERWISE SET HTML
+	            Dom(element).html(userData.domData[prop].data);
+	          }
+
+	          // UPDATE DOMDATA OBJECT
+	          self.domData[prop].data = userData.domData[prop].data;
+	          self.domData[prop].previous = value;
+	        }
+
+	        watchData(self, prop); // WATCH FOR CHANGES TO OUR DATA
+
+	        // ONCE ALL DATA HAS BEEN CHECKED
+	        if (key === datas.length - 1) {
+	          if (typeof self.domData[prop] === 'undefined') {
+	            self.domData[prop] = {
+	              data: '',
+	              previous: null
+	            };
+	            // THROW AN ERROR IF WE CAN'T DETERMINE AN INITIAL DEFAULT VALUE
+	            // TODO: ABSTRACT ERROR MESSAGES OUT INTO AN ERROR HANDLER SERVICE (ESPECIALLY SUCH IN-DEPTH MESSAGES)
+	            console.error('Error populating ' + prop + ' data:\n\n' + 'Found ' + (datas.length - 1) + ' element(s) with ' + namespace + '-data="' + prop + '" attribute, and could not determine default value.\nIf you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in domData object when creating the namespace:\n' + 'domData: {\n' + '  ' + prop + ': {\n' + '    data: "my value"\n' + '  }\n' + '}\n\n' + 'Alternatively, if you want to pull the default data from the dom, you can add an init-data attribute to one (and only one!) of these elements: \n', datas, '\n\nmore info: http://docs.daftjs.com/namespace/data');
+	          } else {
+	            setData(self, prop);
+	          }
+	        }
+
+	        // END
 	      });
-	    });
+	    }
+
+	    function setData(self, prop) {
+	      // SET DOM DATA
+
+	      var datas = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data="' + prop + '"]');
+
+	      datas.forEach(function (element, key) {
+	        if (typeof element.type !== 'undefined' && element.value !== '') {
+	          Daft.dom(element).val(self.domData[prop].data);
+	        } else {
+	          Daft.dom(element).html(self.domData[prop].data);
+	        }
+	      });
+	    }
+
+	    // SET PARENT COMTAINER
+	    self.container = Dom('[namespace="' + namespace + '"]')[0];
+
+	    // SET NAMESPACE NAME
+	    self.namespace = namespace;
+
+	    // POPULATE DOM DATA
+	    populateDomData();
+
+	    // SET ACTIONS
+	    self.actions = {
+	      test: self.test,
+	      updateData: populateDomData
+	    };
+
+	    // ADD NAMESPACE TO NS OBJECT
+	    Daft.NS[namespace] = self;
+
+	    // WATCH FOR ANY DOM CHANGES
+	    self.observer = new Watcher.Observe(self.container);
+
+	    // ALLOW FOR CALLBACK AS LAST PARAMETER
+	    // TODO: CONSIDER DELETING SINCE WE HAVE ONLOAD NOW
+	    if (typeof cb === 'function') cb();
+
+	    // INFORM ONLOAD WE ARE ALL FINISHED
+	    self.loaded.success = true;
 	  }
 
-	  // SET PARENT COMTAINER
-	  self.container = Dom('[namespace="' + namespace + '"]')[0];
+	  _createClass(Namespace, [{
+	    key: 'onUpdate',
+	    value: function onUpdate(cb) {
+	      if (typeof cb === 'function') cb();
+	    }
+	  }, {
+	    key: 'onload',
+	    value: function onload(cb) {
+	      var self = this;
 
-	  // SET NAMESPACE NAME
-	  self.namespace = namespace;
+	      // MAX SECS / REFRESH RATE = HOW MANY TIMES WE CAN TRY TRY
+	      var fail = self.loaded.fail / self.loaded.refresh;
 
-	  // POPULATE DOM DATA
-	  populateDomData();
+	      if (self.loaded.success) {
+	        if (typeof cb === 'function') cb();
+	      } else if (!self.loaded.success && self.loaded.attempts < fail) {
+	        self.loaded.attempts++;
+	        setTimeout(function () {
+	          if (!self.loaded.success) {
+	            self.onload(cb);
+	          } else {
+	            if (typeof cb === 'function') cb();
+	          }
+	        }, self.loaded.refresh);
+	      } else {
+	        cb({
+	          msg: 'Failed to finish loading ' + self.namespace + ' namespace after ' + self.loaded.fail / 1000 + ' seconds'
+	        });
+	      }
+	    }
+	  }]);
 
-	  // SET ACTIONS
-	  self.actions = {
-	    test: self.test,
-	    updateData: populateDomData
-	  };
-
-	  // ADD NAMESPACE TO NS OBJECT
-	  Daft.NS[namespace] = self;
-
-	  // WATCH FOR ANY DOM CHANGES
-	  self.observer = new Watcher.Observe(self.container);
-	};
+	  return Namespace;
+	})();
 
 	module.exports = Namespace;
 
@@ -3064,12 +3188,14 @@ var Daft =
 	      }
 	    }
 
-	    if (typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
+	    if (mutation.target.nodeValue !== null && typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
 	      dataKey = NS.attributes[NS.namespace.namespace + '-data'].value;
-	    }
 
-	    // UPDATE OBJECT WITH NEW VALUE
-	    Daft.NS[NS.namespace.namespace].domData[dataKey].data = mutation.target.nodeValue;
+	      // UPDATE OBJECT WITH NEW VALUE
+	      Daft.NS[NS.namespace.namespace].domData[dataKey].data = mutation.target.nodeValue;
+	      // AND PREVIOUS VALUE
+	      Daft.NS[NS.namespace.namespace].domData[dataKey].previous = mutation.oldValue;
+	    }
 	  }
 
 	  var Watcher = new MutationObserver(function (mutations) {

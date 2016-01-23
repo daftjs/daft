@@ -1,5 +1,6 @@
 * {
-  font-weight: 400; }
+  font-weight: 400;
+  outline: none; }
 
 body, html {
   background: #fff;
@@ -17,3 +18,7 @@ p {
   padding-bottom: 3px; }
   [contentEditable]:focus {
     border-color: red; }
+
+input {
+  box-sizing: border-box;
+  padding: 10px; }

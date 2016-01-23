@@ -133,12 +133,14 @@ module.exports = function (attrs) {
       }
     }
 
-    if (typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
+    if (mutation.target.nodeValue !== null && typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
       dataKey = NS.attributes[NS.namespace.namespace + '-data'].value
-    }
 
-    // UPDATE OBJECT WITH NEW VALUE
-    Daft.NS[NS.namespace.namespace].domData[dataKey].data = mutation.target.nodeValue
+      // UPDATE OBJECT WITH NEW VALUE
+      Daft.NS[NS.namespace.namespace].domData[dataKey].data = mutation.target.nodeValue
+      // AND PREVIOUS VALUE
+      Daft.NS[NS.namespace.namespace].domData[dataKey].previous = mutation.oldValue
+    }
   }
 
   var Watcher = new MutationObserver(function (mutations) {
