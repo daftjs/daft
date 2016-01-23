@@ -1,6 +1,6 @@
 {
   "name": "daft",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Daft javascript framework",
   "license": "MIT",
   "main": "daft.js",
