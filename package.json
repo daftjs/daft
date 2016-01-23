@@ -26,6 +26,10 @@
     "email": "jesse@jesseweed.com",
     "url": "http://jesseweed.com"
   },
+  "engines": {
+    "node": "5.5.0",
+    "npm": "3.3.12"
+  },
   "pre-push": [
     "test"
   ],
