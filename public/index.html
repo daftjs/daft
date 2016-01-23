@@ -9,16 +9,19 @@
   <body>
 
     <section namespace="header">
-      <h1 contentEditable="true" header-data="title" daft-update="onUpdate">Daft.js</h1>
-      <span header-data="title"></span>
+      <h1 contentEditable="true" header-data="title" daft-update="onTitleUpdate">Daft.js</h1>
+      <span header-data="subtitle"></span>
     </section>
 
     <br>
 
     <section namespace="content">
-      <p content-data="message" contentEditable="true"></p>
-      <h5>echo</h5>
+      <h3 data-init content-data="message" contentEditable="true"></h3>
+      <h5>echo <span content-data="message"></span></h5>
       <p content-data="message"></p>
+
+      <input type="text" name="name" content-data="message" style="width:100%">
+
     </section>
 
     <script src="js/daft.js"></script>
