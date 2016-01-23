@@ -49,12 +49,12 @@
     "gulp-standard": "^5.2.2",
     "gulp-uglify": "^1.5.1",
     "gulp-util": "^3.0.7",
+    "pre-push": "^0.1.7",
     "require-dir": "^0.3.0",
     "webpack": "^1.12.9"
   },
   "dependencies": {
     "domtastic": "^0.11.2",
-    "pre-push": "^0.1.7",
     "watchjs": "0.0.0"
   }
 }
