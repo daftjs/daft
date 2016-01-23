@@ -1,3 +1,9 @@
+## v0.2.0
++ Large refactor of namespace module:
+  + Add data-init attribute to det default value & allow data-binding on multiple elements with same data attributes
+  + Add event listener to deal with MutationObserver not handling form elements (revisit this later to see if there's a better solution)
+  + Add namespace.onload function to allow namespace logic to be handled after dom & data objects are created.
+
 ## v0.1.7
 + Bower should only publish dist folder
 + Cleanup unused files
