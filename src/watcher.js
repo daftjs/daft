@@ -1,4 +1,5 @@
 // WATCHES OUR NAMESPACE AND REPORT ON ANY CHANGES
+var Utility = require('./utility.js')
 
 module.exports = function (attrs) {
   var MutationObserver = MutationObserver || window.MutationObserver
@@ -8,8 +9,8 @@ module.exports = function (attrs) {
   // CHECK IF A NAMESPACE EXISTS, AND RETURN THE OBJECT IF IT DOES
 
     // IF NAMESPACE EXISTS
-    if (typeof Daft.App[namespace] === 'object') {
-      return Daft.App[namespace]
+    if (typeof Daft[Daft.name][Utility.setNamespace(namespace)] === 'object') {
+      return Daft[Daft.name][Utility.setNamespace(namespace)]
     // IF NAMESPACE DOES NOT EXIST
     } else {
       return false
@@ -17,8 +18,6 @@ module.exports = function (attrs) {
   }
 
   function getNameSpace (mutation) {
-  //
-
     var attributes = null
     var namespace = null
     var parent = null
@@ -39,7 +38,7 @@ module.exports = function (attrs) {
   function getAttrs (el, namespace) {
   // GET ATTRIBUTES OF PARENT ELEMENT
 
-    el = Daft.dom(el.target.parentElement)[0].closest('[' + namespace.namespace + '-data]')
+    el = Daft.dom(el.target.parentElement)[0].closest('[' + namespace.name.toLowerCase() + '-data]')
 
     if (typeof el !== 'undefined' && el !== null) {
       return el.attributes
@@ -53,7 +52,7 @@ module.exports = function (attrs) {
 
     var args = []
     var func = false
-    var obj = window.Daft.App[NS.namespace.namespace]
+    var obj = window.Daft[Daft.name][NS.namespace.name]
 
     // IF ACTUAL FUNCTION WAS PASSED & NOT JUST A NAME OF A FUNCTION
     if (fn !== null && fn.indexOf('(') > 0) {
@@ -66,13 +65,10 @@ module.exports = function (attrs) {
     // CHECK IF A FUNCTION EXISTS IN: namespace.function
     if (typeof obj[fn] === 'function') {
       func = obj[fn]
-    // CHECK IF A FUNCTION EXISTS IN: namespace.function
-    } else if (typeof obj.actions[fn] === 'function') {
-      func = obj.actions[fn]
     // CHECK IF A FUNCTION EXISTS IN GLOBAL NAMESPACE
     } else if (typeof window[fn] === 'function') {
       func = window[fn]
-      console.warn('WARNING:', fn + ' function exists as a global. You should define it as a part of your ' + NS.namespace.namespace + ' namespace instead: http://docs.daftjs.com/namespace/functions'
+      console.warn('WARNING:', fn + ' function exists as a global. You should define it as a part of your ' + NS.namespace.name + ' namespace instead: http://docs.daftjs.com/namespace/functions'
       )
     }
 
@@ -88,14 +84,15 @@ module.exports = function (attrs) {
 
     var dataKey = null
     var updateFunction = null
+    var dataAttribute = NS.namespace.name.toLowerCase() + '-data'
 
     if (NS.attributes !== null) {
       if (typeof NS.attributes['daft-update'] !== 'undefined') {
         updateFunction = NS.attributes['daft-update'].value
       }
 
-      if (typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
-        dataKey = NS.attributes[NS.namespace.namespace + '-data'].value
+      if (typeof NS.attributes[dataAttribute] !== 'undefined') {
+        dataKey = NS.attributes[dataAttribute].value
       }
 
       // IF AN UPDATE FUNCTION WAS PROVIDED
@@ -133,14 +130,13 @@ module.exports = function (attrs) {
       }
     }
 
-    if (mutation.target.nodeValue !== null && typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
-      dataKey = NS.attributes[NS.namespace.namespace + '-data'].value
+    if (mutation.target.nodeValue !== null && typeof NS.attributes[dataAttribute] !== 'undefined') {
+      dataKey = NS.attributes[dataAttribute].value
 
       // UPDATE OBJECT WITH NEW VALUE
-      console.log('new value', mutation.target.nodeValue)
-      Daft.App[NS.namespace.namespace].domData[dataKey].value = mutation.target.nodeValue
+      Daft[Daft.name][NS.namespace.name].data[dataKey].value = mutation.target.nodeValue
       // AND PREVIOUS VALUE
-      Daft.App[NS.namespace.namespace].domData[dataKey].previous = mutation.oldValue
+      Daft[Daft.name][NS.namespace.name].data[dataKey].previous = mutation.oldValue
     }
   }
 

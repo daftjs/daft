@@ -1,46 +1,42 @@
-class DaftJS {
+var Logger = require('./logger')
+var Bootstrap = require('./bootstrap')
 
-  constructor () {
+module.exports = {
+
+  // REQUIRES
+
+  create: function (name, opt, cb) {
     var self = this
 
-    self.version = {
-      codename: 'bulleit',
-      full: '0.2.0',
-      major: '0',
-      minor: '2',
-      dot: '0'
-    }
-    self.config = {
-      logging: {
-        console: true,
-        file: false
-      }
+    Bootstrap.app(name, opt)
+
+    // SET APP KEYS
+    for (var bootstrapKey in Bootstrap.settings) {
+      self[bootstrapKey] = Bootstrap.settings[bootstrapKey]
     }
 
-    self.Logger = require('./logger') // LOGGING
+    // SET ATTRIBUTE KEYS
+    for (var attrKey in self.attributes) {
+      self.attributes[attrKey] = self.prefix + self.attributes[attrKey]
+    }
 
     self.dom = require('domtastic')
     self.Namespace = require('./namespace')
-    self.App = {}
-  }
+    self[name] = {}
 
-  // LOGGING ALIAS'
-  error () { new this.Logger(this.config.logging.console).error(arguments[0], arguments[1]) }
-  info () { new this.Logger(this.config.logging.console).info(arguments[0], arguments[1]) }
-  log () { new this.Logger(this.config.logging.console).log(arguments[0], arguments[1]) }
-  warn () { new this.Logger(this.config.logging.console).warn(arguments[0], arguments[1]) }
+    if (typeof cb === 'function') cb.call(self)
+  },
 
   // READY EVENT FIRED WHEN EVERYTHING IS LOADED
-  ready (cb) {
+  ready: function (cb) {
+    var self = this
     this.dom(document).ready(function () {
-      if (window.Daft) {
-        cb.apply(this)
-      } else {
-        console.error('Error:', 'Daft could not be loaded')
-      }
+      if (typeof cb === 'function') cb.call(self)
     })
-  }
+  },
 
+  error: function () { new Logger(this.logging.console).error(arguments[0], arguments[1]) },
+  info: function () { new Logger(this.logging.console).info(arguments[0], arguments[1]) },
+  log: function () { new Logger(this.logging.console).log(arguments[0], arguments[1]) },
+  warn: function () { new Logger(this.logging.console).warn(arguments[0], arguments[1]) }
 }
-
-module.exports = new DaftJS()

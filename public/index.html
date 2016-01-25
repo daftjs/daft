@@ -4,36 +4,26 @@
     <meta charset="utf-8">
     <title>Daft.js</title>
     <link rel="stylesheet" href="/css/daft.css">
-    <script src="lib/require.js"></script>
+    <script data-main="js/bootstrap.js" src="lib/require.js"></script>
   </head>
   <body>
 
+    <!-- HEADER NAMESPACE -->
     <header namespace="header">
       <h1 data-init header-data="title" daft-update="onTitleUpdate">Daft.js</h1>
-      <header-title>Waiting for name...</header-title>
     </header>
 
-    <br>
-
+    <!-- CONTENT NAMESPACE -->
     <section namespace="content">
-      <h2>Hello, my name is:<span id="name-init" data-init contentEditable="true" content-data="name">Bob</span></h2>
-      <content-greeting class="" content-data="greeting">Please enter your name above so I know what to call you!</content-greeting>
 
-      <content-name daft-update="nameChange">Waiting for name 1...</content-name>
-      <content-name>Waiting for name 2...</content-name><br>
-      <content-multiple-dash-key></content-multiple-dash-key>
+      <h2>Hello, my name is: <content-name data-init contentEditable="true" daft-update="nameChange">Jane Doe</content-name></h2>
+      <content-greeting>Please enter your name above so I know what to call you!</content-greeting>
+
+      <br><br><br><br>
+
+      <content-status>loading...</content-status>
 
     </section>
-
-    <br><br>
-
-    <script src="js/daft.js"></script>
-
-    <script>
-      requirejs(['js/header.js']);
-      requirejs(['js/content.js']);
-    </script>
-
 
   </body>
 </html>

@@ -1,15 +1,17 @@
 // CREATES A NEW NAPESPACE
+var WatchJS = require('watchjs')
+var Watch = WatchJS.watch
+var Daft = Daft || window.Daft
+var Dom = require('domtastic')
+var Utility = require('./utility.js')
 
 class Namespace {
 
   constructor (namespace, userData, cb) {
-    var Daft = Daft || window.Daft
-    var Dom = require('domtastic')
-    var WatchJS = require('watchjs')
-    var Watcher = require('./watcher')([namespace + '-data'])
     var self = this
+    var Watcher = require('./watcher')([namespace + '-data'])
 
-    self.watch = WatchJS.watch
+    namespace = namespace.toLowerCase()
 
     self.loaded = {
       attempts: 0, // HOW MANY TIMES WE'VE TRIED TO FIRE LOAD EVENT
@@ -27,40 +29,18 @@ class Namespace {
     }
 
     function watchData (scope, elements) {
-    // WATCH FOR CHANGES TO NS OBJECT
-
-      // self.watch(scope.domData[el.key], function () {
-      // // IF OBJECT CHANGES
-      //   var self = this
-      //   var element = Daft.dom(el.element)
-      //
-      //   if (typeof element.type !== 'undefined') {
-      //     console.log('set value', self.value)
-      //     Daft.dom(element).value(self.value)
-      //   } else {
-      //     console.log('set html', self.value)
-      //     console.log(element)
-      //     Daft.dom(element).html(self.value)
-      //   }
-      // })
-
-      console.log('scope', scope)
-      console.log('elements', elements)
+    // WATCH FOR CHANGES TO DOM DATA OBJECT
 
       for (var key in elements) {
         elements[key].forEach(function (el, key) {
-          var element = Daft.dom(el.element)[0]
+          var element = el.element
 
-          if (typeof scope.domData[el.key] !== 'undefined') {
-            console.log('watch ' + el.key)
-            scope.watch(scope.domData[el.key], function () {
-              console.log('change to' + el.key, scope.domData[el.key])
-              var val = scope.domData[el.key].value
+          if (typeof scope.data[el.key] !== 'undefined') {
+            Watch(scope.data[el.key], function () {
+              var val = scope.data[el.key].value
               if (typeof element.type !== 'undefined') {
-                console.log('set value', scope.value)
                 Daft.dom(element).value(val)
               } else {
-                console.log('set html', scope.value)
                 Daft.dom(element).html(val)
               }
             })
@@ -73,29 +53,43 @@ class Namespace {
     function registerTags (namespace) {
       var elements = Dom('[namespace="' + namespace + '"] *')
       var tags = []
+      var skip = false
 
       elements = Array.prototype.slice.call(elements).filter(function (el) {
         return el.localName.indexOf('-') !== -1 || el.getAttribute('is')
       })
 
       // LOOP THROUGH EACH CUSTOM ELEMENT
-      elements.forEach(function (value, key) {
-        var attrs = value.localName.split('-')
+      elements.forEach(function (el, key) {
+        var attrs = el.localName.split('-')
+
+        var root = false
+
+        if (el.attributes['data-init']) root = true
 
         // MAKE SURE IT'S IN OUR NAMESPACE
         if (attrs[0] === namespace) {
           // ADD DATA TO ARRAY OF CUSTOM TAGS
           tags.push({
-            key: value.localName.split(attrs[0] + '-')[1],
+            element: el,
+            key: el.localName.split(attrs[0] + '-')[1],
             namespace: attrs[0],
-            tag: value.localName
+            root: root,
+            tag: el.localName,
+            value: el.innerHTML
           })
 
-          // REGISTER ELEMENTS WITH THE DOM
-          try { document.registerElement(value.localName) } catch (e) {}
+          if (el.attributes[namespace + '-data']) {
+            if (el.localName.split('content-').join('') === el.attributes[namespace + '-data'].value) {
+              skip = true
+            }
+          }
 
-          Dom(value).attr(namespace + '-data', value.localName.split(attrs[0] + '-')[1])
+          if (!skip) Dom(el).attr(namespace + '-data', el.localName.split(attrs[0] + '-')[1])
         }
+
+        // REGISTER ELEMENTS WITH THE DOM
+        try { document.registerElement(el.localName) } catch (e) {}
       })
 
       return tags
@@ -103,43 +97,37 @@ class Namespace {
 
     // POPULAR DOM DATA OBJECT BASED ON namespace-data OBJECTS
     function populateDomData () {
-      self.domData = {}
+      self.data = {}
 
-      var datas = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]')
+      var domTags = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]')
 
       self.customTags = registerTags(namespace)
 
-      // var datas = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]')
-
-      // console.log('custom', )
-
-      // GRAB ALL namespace-data ELEMENTS & APPEND TO DOM DATA
-      // datas.forEach(function (element, key) {
-      //   attributeData(element, key, datas)
-      // })
-
-      domData(self.customTags, datas)
+      data(self.customTags, domTags)
     }
 
-    function domData (tags, datas) {
+    function data (tags, domTags) {
     // COMBINE DATA FROM CUSTOM ELEMENTS & DATA ATTRIBUTES
 
-      var allElements = []
+      var elementCollection = []
+      var added = []
 
       // GET EACH STANDARD ELEMENT
-      datas.forEach(function (el) {
+      domTags.forEach(function (el) {
         var root = false
         var key = el.attributes[namespace + '-data'].value
 
         if (el.attributes['data-init']) root = true
 
-        if (typeof allElements[key] === 'undefined') {
-          allElements[key] = []
-          allElements.length++
+        if (typeof elementCollection[key] === 'undefined') {
+          elementCollection[key] = []
+          elementCollection.length++
         }
 
+        added.push(el)
+
         // SAVE DATA
-        allElements[key].push({
+        elementCollection[key].push({
           element: el,
           key: key,
           namespace: namespace,
@@ -153,27 +141,49 @@ class Namespace {
       tags.forEach(function (element, key) {
         Daft.dom(element.tag).forEach(function (el) {
           var root = false
+          var skip = false
 
           if (el.attributes['data-init']) root = true
 
-          if (typeof allElements[element.key] === 'undefined') {
-            allElements[element.key] = []
-            allElements.length++
+          if (typeof elementCollection[element.key] === 'undefined') {
+            elementCollection[element.key] = []
+            elementCollection.length++
           }
 
-          // GET EACH STANDARD ELEMENT
-          allElements[element.key].push({
-            element: el,
-            key: element.key,
-            namespace: element.namespace,
-            root: root,
-            tag: element.tag,
-            value: el.innerHTML
+          added.forEach(function (value, key) {
+            if (value === el) skip = true
           })
+
+          if (!skip) {
+          //   console.log('add', element)
+            elementCollection[element.key].push({
+              element: el,
+              key: element.key,
+              namespace: element.namespace,
+              root: root,
+              tag: element.tag,
+              value: el.innerHTML
+            })
+          }
         })
       })
 
-      populateData(allElements)
+      populateData(elementCollection)
+    }
+
+    function throwError (which, data) {
+      var messages = []
+
+      messages.noRoot = console.error('Error populating ' + data.prop + ' data:\n\n' +
+      'Found multiple elements with "' + data.prop + '" data in "' + namespace + '" namespace, and could not determine default value. If you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in data object when creating the namespace:\n' +
+      'data: {\n' +
+      '  ' + data.prop + ': {\n' +
+      '    value: "hello world"\n' +
+      '  }\n' +
+      '}\n\n' +
+      'Alternatively, if you want to pull the default data from the dom, you can add a data-init attribute to one (and only one!) of these elements.')
+
+      return messages[which]
     }
 
     function populateData (elements) {
@@ -181,6 +191,9 @@ class Namespace {
 
       for (var key in elements) {
         var qty = elements[key].length
+        var root = false
+        var jsData = false
+
         elements[key].forEach(function (el, key) {
           var element = el.element
           var prop = el.key
@@ -189,8 +202,7 @@ class Namespace {
           if (qty === 1 || el.root === true) {
             if (typeof element.type !== 'undefined' && element.value !== '') value = element.value
             if (typeof element.innerHTML !== 'undefined' && element.innerHTML !== '') value = element.innerHTML
-
-            self.domData[prop] = {
+            self.data[prop] = {
               value: value,
               previous: null
             }
@@ -200,62 +212,50 @@ class Namespace {
           // TODO: REVISIT HOW THIS WORKS
           if (typeof element.type !== 'undefined') {
             element.addEventListener('input', function (e) {
-              self.domData[prop].value = e.target.value
+              self.data[prop].value = e.target.value
               this.setSelectionRange(this.selectionStart, this.selectionEnd)
             })
           }
 
-          if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop] !== 'undefined') {
+          if (typeof userData.data !== 'undefined' && typeof userData.data[prop] !== 'undefined') {
           // OVERRIDE DOM DATA WITH JS DATA IF THE EXISTS
 
-            if (typeof self.domData[prop] === 'undefined') {
+            if (typeof self.data[prop] === 'undefined') {
             // CREATE DOM DATA FOR PROP IF IT DOESN'T EXIST
-              self.domData[prop] = { data: '', previous: null }
+              self.data[prop] = { data: '', previous: null }
             }
 
             // SET VALUE IF FORM FIELD
             if (typeof element.type !== 'undefined') {
-              Dom(element).val(userData.domData[prop].value)
+              Dom(element).val(userData.data[prop].value)
             } else { // OTHERWISE SET HTML
-              Dom(element).html(userData.domData[prop].value)
+              Dom(element).html(userData.data[prop].value)
             }
 
             // UPDATE DOMDATA OBJECT
-            self.domData[prop].value = userData.domData[prop].value
-            self.domData[prop].previous = value
+            self.data[prop].value = userData.data[prop].value
+            self.data[prop].previous = value
+
+            jsData = true
           }
 
-          // if (self.domData[prop]) {
-          //
-          // }
+          if (el.root) root = true
 
-          // ONCE ALL DATA HAS BEEN CHECKED
-          if (key === elements.length - 1) {
-            console.info('ALL DONE')
-            if (typeof self.domData[prop] === 'undefined') {
-              console.log('undefined data')
-              self.domData[prop] = {
-                value: '',
-                previous: null
-              }
-              // THROW AN ERROR IF WE CAN'T DETERMINE AN INITIAL DEFAULT VALUE
-              // TODO: ABSTRACT ERROR MESSAGES OUT INTO AN ERROR HANDLER SERVICE (ESPECIALLY SUCH IN-DEPTH MESSAGES)
-              console.error(
-                'Error populating ' + prop + ' data:\n\n' +
-                'Found ' + (elements.length - 1) + ' element(s) with ' + namespace + '-data="' + prop + '" attribute, and could not determine default value.\nIf you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in domData object when creating the namespace:\n' +
-                'domData: {\n' +
-                '  ' + prop + ': {\n' +
-                '    data: "my value"\n' +
-                '  }\n' +
-                '}\n\n' +
-                'Alternatively, if you want to pull the default data from the dom, you can add a data-init attribute to one (and only one!) of these elements: \n', elements, '\n\nmore info: http://docs.daftjs.com/namespace/data')
-            } else {
-              watchData(self, elements) // WATCH FOR CHANGES TO OUR DATA
-              setData(self, elements)
-            }
+          // IF WE HAVE MORE THAN ONE ELEMENT, MAKE SURE WE HAVE A ROOT ELEMENT TO SET DEFAULT VALUE
+          if (qty > 1 && key === qty - 1) {
+            // THROW AN ERROR IF WE CAN'T DETERMINE AN INITIAL DEFAULT VALUE
+            if (!root && !jsData) throwError('noRoot', {prop: prop, elements: elements})
+          } else {
+            setData(self, elements)
+            watchData(self, elements) // WATCH FOR CHANGES TO OUR DATA
           }
-        }) // END LOOP
-      } // END LOOP
+
+          // JUST IN CASE WE STILL DON'T KNOW WHAT THE DOM DATA VALUE SHOULD BE
+          if (typeof self.data[prop] === 'undefined' && el.tag !== 'content-' + prop) {
+            self.data[prop] = { value: '', previous: null }
+          }
+        })
+      }
     }
 
     function setData (self, elements) {
@@ -264,12 +264,11 @@ class Namespace {
       for (var key in elements) {
         elements[key].forEach(function (el, key) {
           var element = Daft.dom(el.element)[0]
-          if (typeof self.domData[el.key] !== 'undefined') {
-            var val = self.domData[el.key].value
+          if (typeof self.data[el.key] !== 'undefined') {
+            var val = self.data[el.key].value
             if (typeof element.type !== 'undefined') {
               Daft.dom(element).value(val)
             } else {
-              console.log('html', val)
               Daft.dom(element).html(val)
             }
           }
@@ -281,19 +280,13 @@ class Namespace {
     self.container = Dom('[namespace="' + namespace + '"]')[0]
 
     // SET NAMESPACE NAME
-    self.namespace = namespace
+    self.name = Utility.setNamespace(namespace)
 
     // POPULATE DOM DATA
     populateDomData()
 
-    // SET ACTIONS
-    self.actions = {
-      test: self.test,
-      updateData: populateDomData
-    }
-
     // ADD NAMESPACE TO NS OBJECT
-    Daft.App[namespace] = self
+    Daft[Daft.name][self.name] = self
 
     // WATCH FOR ANY DOM CHANGES
     self.observer = new Watcher.Observe(self.container)

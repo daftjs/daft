@@ -1,21 +1,21 @@
 window.define(function (require) {
   var Daft = window.Daft
-  var Content = new Daft.Namespace('content')
+
+  var Content = new Daft.Namespace('content', {
+    data: {
+      status: {
+        value: 'Page loaded.'
+      }
+    }
+  })
 
   // ON LOAD
   Content.onload(function () {
     var self = this
-    var data = self.domData
-
-    Daft.info('Content namespace loaded')
-
-    setTimeout(function () {
-      // data.message.value = 'message updated!!!'
-    }, 2000)
+    var data = self.data
 
     // ON UPDATE FUNCTION FOR TITLE
     Content.nameChange = function (response) {
-      console.log('response', response)
       if (response.value !== '') {
         data.greeting.value = 'Great, I shall call you...' + response.value + '!'
       } else {

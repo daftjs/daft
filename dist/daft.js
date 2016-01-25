@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
@@ -60,6 +60,64 @@ var Daft =
 
 	'use strict';
 
+	var Logger = __webpack_require__(2);
+	var Bootstrap = __webpack_require__(3);
+
+	module.exports = {
+
+		// REQUIRES
+
+		create: function create(name, opt, cb) {
+			var self = this;
+
+			Bootstrap.app(name, opt);
+
+			// SET APP KEYS
+			for (var bootstrapKey in Bootstrap.settings) {
+				self[bootstrapKey] = Bootstrap.settings[bootstrapKey];
+			}
+
+			// SET ATTRIBUTE KEYS
+			for (var attrKey in self.attributes) {
+				self.attributes[attrKey] = self.prefix + self.attributes[attrKey];
+			}
+
+			self.dom = __webpack_require__(5);
+			self.Namespace = __webpack_require__(25);
+			self[name] = {};
+
+			if (typeof cb === 'function') cb.call(self);
+		},
+
+		// READY EVENT FIRED WHEN EVERYTHING IS LOADED
+		ready: function ready(cb) {
+			var self = this;
+			this.dom(document).ready(function () {
+				if (typeof cb === 'function') cb.call(self);
+			});
+		},
+
+		error: function error() {
+			new Logger(this.logging.console).error(arguments[0], arguments[1]);
+		},
+		info: function info() {
+			new Logger(this.logging.console).info(arguments[0], arguments[1]);
+		},
+		log: function log() {
+			new Logger(this.logging.console).log(arguments[0], arguments[1]);
+		},
+		warn: function warn() {
+			new Logger(this.logging.console).warn(arguments[0], arguments[1]);
+		}
+	};
+
+	/***/
+},
+/* 2 */
+/***/function (module, exports) {
+
+	'use strict';
+
 	var _createClass = function () {
 		function defineProperties(target, props) {
 			for (var i = 0; i < props.length; i++) {
@@ -76,82 +134,208 @@ var Daft =
 		}
 	}
 
-	var DaftJS = function () {
-		function DaftJS() {
-			_classCallCheck(this, DaftJS);
+	var Logger = function () {
+		function Logger(allow) {
+			_classCallCheck(this, Logger);
 
-			var self = this;
+			this.allow = allow;
+		}
 
-			self.version = {
+		_createClass(Logger, [{
+			key: 'log',
+			value: function log(msg) {
+				if (window.console.log && this.allow) {
+					if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
+						window.console.log(arguments[0], arguments[1]);
+					} else {
+						window.console.log(arguments[0]);
+					}
+				}
+			}
+		}, {
+			key: 'info',
+			value: function info() {
+				if (window.console.info && this.allow) {
+					if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
+						window.console.info(arguments[0], arguments[1]);
+					} else {
+						window.console.info(arguments[0]);
+					}
+				}
+			}
+		}, {
+			key: 'error',
+			value: function error() {
+				if (window.console.error && this.allow) {
+					if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
+						window.console.error(arguments[0], arguments[1]);
+					} else {
+						window.console.error(arguments[0]);
+					}
+				}
+			}
+		}, {
+			key: 'warn',
+			value: function warn() {
+				if (window.console.warn && this.allow) {
+					if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
+						window.console.warn(arguments[0], arguments[1]);
+					} else {
+						window.console.warn(arguments[0]);
+					}
+				}
+			}
+		}]);
+
+		return Logger;
+	}();
+
+	module.exports = Logger;
+
+	/***/
+},
+/* 3 */
+/***/function (module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Utility = __webpack_require__(4);
+
+	module.exports = {
+
+		app: function app(name, opt) {
+			if (typeof opt !== 'undefined') Utility.bootstrap(this.settings, opt); // APPLY NEW APP SETTINGS
+			if (typeof name !== 'undefined') this.settings.name = name; // SET APP NAME
+		},
+
+		set: function set(opt) {
+			Utility.bootstrap(this.settings, opt);
+		},
+
+		settings: {
+			name: 'Daft',
+			attributes: {
+				app: '-app',
+				component: '-component',
+				data: '-data',
+				include: '-include',
+				update: '-update'
+			},
+			other: 'test',
+			prefix: 'dj',
+			templates: {
+				dir: 'templates',
+				ext: '.html'
+			},
+			router: {
+				html5: true,
+				prepend: '#'
+			},
+			version: {
 				codename: 'bulleit',
 				full: '0.2.0',
 				major: '0',
 				minor: '2',
 				dot: '0'
-			};
-			self.config = {
-				logging: {
-					console: true,
-					file: false
-				}
-			};
-
-			self.bootstrap = {
-				Dom: __webpack_require__(2), // DOM FUNCTIONS
-				Logger: __webpack_require__(22) // LOGGING
-			};
-
-			self.dom = self.bootstrap.Dom;
-			self.Namespace = __webpack_require__(23);
-			self.App = {};
+			},
+			logging: {
+				console: true,
+				file: false
+			}
 		}
-
-		// LOGGING ALIAS'
-
-		_createClass(DaftJS, [{
-			key: 'error',
-			value: function error() {
-				new this.bootstrap.Logger(this.config.logging.console).error(arguments[0], arguments[1]);
-			}
-		}, {
-			key: 'info',
-			value: function info() {
-				new this.bootstrap.Logger(this.config.logging.console).info(arguments[0], arguments[1]);
-			}
-		}, {
-			key: 'log',
-			value: function log() {
-				new this.bootstrap.Logger(this.config.logging.console).log(arguments[0], arguments[1]);
-			}
-		}, {
-			key: 'warn',
-			value: function warn() {
-				new this.bootstrap.Logger(this.config.logging.console).warn(arguments[0], arguments[1]);
-			}
-
-			// READY EVENT FIRED WHEN EVERYTHING IS LOADED
-
-		}, {
-			key: 'ready',
-			value: function ready(cb) {
-				this.dom(document).ready(function () {
-					if (window.Daft) {
-						cb();
-					} else {
-						console.error('Error:', 'Daft could not be loaded');
-					}
-				});
-			}
-		}]);
-
-		return DaftJS;
-	}();
-
-	module.exports = new DaftJS();
+	};
 
 	/***/
 },
-/* 2 */
+/* 4 */
+/***/function (module, exports) {
+
+	'use strict';
+
+	var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+		return typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
+	} : function (obj) {
+		return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
+	};
+
+	module.exports = {
+		bootstrap: function bootstrap(settings, opt, keys) {
+			// BOOTSTRAP NEW APP WITH USER DEFINIED VALUES
+			// FALLS BACK TO DEFAULTS IF NOT DEFINED
+
+			if (typeof keys === 'undefined') {
+				keys = '';
+			} else {
+				keys = keys + '.';
+			}
+
+			// keys = ''
+
+			for (var key in settings) {
+				var item = settings[key];
+				if ((typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object') {
+					this.bootstrap(item, opt, key);
+				} else {
+					keys = keys + key;
+					this.setObjectValue(settings, keys, this.extractObjectValue(opt, keys));
+					keys = '';
+				}
+			}
+		},
+
+		capitalize: function capitalize(str) {
+			return str.replace(/(?:^|\s)\S/g, function (a) {
+				return a.toUpperCase();
+			});
+		},
+
+		setNamespace: function setNamespace(name) {
+			return this.capitalize(name);
+		},
+
+		setObjectValue: function setObjectValue(obj, keys, value) {
+			// EXTRACT VALUE OF OBJECT BASED ON STRINGIFIED KEY
+
+			if (typeof value !== 'undefined') {
+				if (typeof keys === 'string') {
+					keys = keys.split('.');
+				}
+				var last = keys.pop();
+				for (var i in keys) {
+					if (!obj.hasOwnProperty(keys[i])) {
+						break;
+					}
+					obj = obj[keys[i]];
+				}
+				if (obj.hasOwnProperty(last)) {
+					obj[last] = value;
+				}
+			}
+		},
+
+		extractObjectValue: function extractObjectValue(obj, keys) {
+			// EXTRACT VALUE OF OBJECT BASED ON STRINGIFIED KEY
+
+			if (typeof keys === 'string') {
+				keys = keys.split('.');
+			}
+			var last = keys.pop();
+			for (var i in keys) {
+				if (!obj.hasOwnProperty(keys[i])) {
+					break;
+				}
+				obj = obj[keys[i]];
+			}
+			if (obj.hasOwnProperty(last)) {
+				return obj[last];
+			}
+		}
+
+	};
+
+	/***/
+},
+/* 5 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -178,79 +362,79 @@ var Daft =
 		}
 	}
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	// Import modules to build up the API
 
-	var _array = __webpack_require__(4);
+	var _array = __webpack_require__(7);
 
 	var array = _interopRequireWildcard(_array);
 
-	var _baseClass = __webpack_require__(6);
+	var _baseClass = __webpack_require__(9);
 
 	var _baseClass2 = _interopRequireDefault(_baseClass);
 
-	var _domAttr = __webpack_require__(7);
+	var _domAttr = __webpack_require__(10);
 
 	var attr = _interopRequireWildcard(_domAttr);
 
-	var _domClass = __webpack_require__(8);
+	var _domClass = __webpack_require__(11);
 
 	var class_ = _interopRequireWildcard(_domClass);
 
-	var _domContains = __webpack_require__(9);
+	var _domContains = __webpack_require__(12);
 
 	var contains = _interopRequireWildcard(_domContains);
 
-	var _css = __webpack_require__(10);
+	var _css = __webpack_require__(13);
 
 	var css = _interopRequireWildcard(_css);
 
-	var _domData = __webpack_require__(11);
+	var _data = __webpack_require__(14);
 
-	var data = _interopRequireWildcard(_domData);
+	var data = _interopRequireWildcard(_data);
 
-	var _domIndex = __webpack_require__(12);
+	var _domIndex = __webpack_require__(15);
 
 	var dom = _interopRequireWildcard(_domIndex);
 
-	var _domExtra = __webpack_require__(13);
+	var _domExtra = __webpack_require__(16);
 
 	var dom_extra = _interopRequireWildcard(_domExtra);
 
-	var _eventIndex = __webpack_require__(14);
+	var _eventIndex = __webpack_require__(17);
 
 	var event = _interopRequireWildcard(_eventIndex);
 
-	var _domHtml = __webpack_require__(16);
+	var _domHtml = __webpack_require__(19);
 
 	var html = _interopRequireWildcard(_domHtml);
 
-	var _noconflict = __webpack_require__(17);
+	var _noconflict = __webpack_require__(20);
 
 	var noconflict = _interopRequireWildcard(_noconflict);
 
-	var _eventReady = __webpack_require__(18);
+	var _eventReady = __webpack_require__(21);
 
 	var ready = _interopRequireWildcard(_eventReady);
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(8);
 
 	var selector = _interopRequireWildcard(_selectorIndex);
 
-	var _selectorClosest = __webpack_require__(15);
+	var _selectorClosest = __webpack_require__(18);
 
 	var closest = _interopRequireWildcard(_selectorClosest);
 
-	var _selectorExtra = __webpack_require__(19);
+	var _selectorExtra = __webpack_require__(22);
 
 	var selector_extra = _interopRequireWildcard(_selectorExtra);
 
-	var _eventTrigger = __webpack_require__(20);
+	var _eventTrigger = __webpack_require__(23);
 
 	var trigger = _interopRequireWildcard(_eventTrigger);
 
-	var _type = __webpack_require__(21);
+	var _type = __webpack_require__(24);
 
 	var type = _interopRequireWildcard(_type);
 
@@ -293,7 +477,7 @@ var Daft =
 
 	/***/
 },
-/* 3 */
+/* 6 */
 /***/function (module, exports) {
 
 	/*
@@ -402,7 +586,7 @@ var Daft =
 
 	/***/
 },
-/* 4 */
+/* 7 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -413,9 +597,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(8);
 
 	var ArrayProto = Array.prototype;
 
@@ -622,7 +806,7 @@ var Daft =
 
 	/***/
 },
-/* 5 */
+/* 8 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -633,7 +817,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	var isPrototypeSet = false;
 
@@ -826,7 +1010,7 @@ var Daft =
 
 	/***/
 },
-/* 6 */
+/* 9 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -843,9 +1027,9 @@ var Daft =
 		}
 	}
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(8);
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	exports['default'] = function (api) {
 
@@ -893,7 +1077,7 @@ var Daft =
 
 	/***/
 },
-/* 7 */
+/* 10 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -904,7 +1088,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	/**
   * Get the value of an attribute for the first element, or set one or more attributes for each element in the collection.
@@ -927,7 +1111,7 @@ var Daft =
 		}
 
 		_util.each(this, function (element) {
-			if ((typeof key === "undefined" ? "undefined" : _typeof2(key)) === 'object') {
+			if ((typeof key === 'undefined' ? 'undefined' : _typeof2(key)) === 'object') {
 				for (var _attr in key) {
 					element.setAttribute(_attr, key[_attr]);
 				}
@@ -965,7 +1149,7 @@ var Daft =
 
 	/***/
 },
-/* 8 */
+/* 11 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -976,7 +1160,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	/**
   * Add a class to the element(s)
@@ -1073,7 +1257,7 @@ var Daft =
 
 	/***/
 },
-/* 9 */
+/* 12 */
 /***/function (module, exports) {
 
 	/**
@@ -1113,7 +1297,7 @@ var Daft =
 
 	/***/
 },
-/* 10 */
+/* 13 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -1124,7 +1308,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	var isNumeric = function isNumeric(value) {
 		return !isNaN(parseFloat(value)) && isFinite(value);
@@ -1203,7 +1387,7 @@ var Daft =
 
 	/***/
 },
-/* 11 */
+/* 14 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -1214,7 +1398,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	var DATAKEYPROP = '__DOMTASTIC_DATA__';
 
@@ -1280,7 +1464,7 @@ var Daft =
 
 	/***/
 },
-/* 12 */
+/* 15 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -1291,9 +1475,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(8);
 
 	var forEach = Array.prototype.forEach;
 
@@ -1474,7 +1658,7 @@ var Daft =
 
 	/***/
 },
-/* 13 */
+/* 16 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -1485,11 +1669,11 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
-	var _index = __webpack_require__(12);
+	var _index = __webpack_require__(15);
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(8);
 
 	/**
   * Append each element in the collection to the specified element(s).
@@ -1607,7 +1791,7 @@ var Daft =
 
 	/***/
 },
-/* 14 */
+/* 17 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -1618,9 +1802,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
-	var _selectorClosest = __webpack_require__(15);
+	var _selectorClosest = __webpack_require__(18);
 
 	/**
   * Shorthand for `addEventListener`. Supports event delegation if a filter (`selector`) is provided.
@@ -1863,7 +2047,7 @@ var Daft =
 
 	/***/
 },
-/* 15 */
+/* 18 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -1874,9 +2058,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _index = __webpack_require__(5);
+	var _index = __webpack_require__(8);
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	/**
   * Return the closest element matching the selector (starting by itself) for each element in the collection.
@@ -1922,7 +2106,7 @@ var Daft =
 					};
 				}();
 
-				if ((typeof _ret === "undefined" ? "undefined" : _typeof2(_ret)) === 'object') return _ret.v;
+				if ((typeof _ret === 'undefined' ? 'undefined' : _typeof2(_ret)) === 'object') return _ret.v;
 			} else {
 				return closest.call(this, selector, context);
 			}
@@ -1937,7 +2121,7 @@ var Daft =
 
 	/***/
 },
-/* 16 */
+/* 19 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -1948,7 +2132,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	/*
   * Get the HTML contents of the first element, or set the HTML contents for each element in the collection.
@@ -1983,7 +2167,7 @@ var Daft =
 
 	/***/
 },
-/* 17 */
+/* 20 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -1994,7 +2178,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
 	/*
   * Save the previous value of the global `$` variable, so that it can be restored later on.
@@ -2025,7 +2209,7 @@ var Daft =
 
 	/***/
 },
-/* 18 */
+/* 21 */
 /***/function (module, exports) {
 
 	/**
@@ -2062,7 +2246,7 @@ var Daft =
 
 	/***/
 },
-/* 19 */
+/* 22 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -2073,9 +2257,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
-	var _index = __webpack_require__(5);
+	var _index = __webpack_require__(8);
 
 	/**
   * Return children of each element in the collection, optionally filtered by a selector.
@@ -2220,7 +2404,7 @@ var Daft =
 
 	/***/
 },
-/* 20 */
+/* 23 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -2231,9 +2415,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(6);
 
-	var _domContains = __webpack_require__(9);
+	var _domContains = __webpack_require__(12);
 
 	var reMouseEvent = /^(?:mouse|pointer|contextmenu)|click/;
 	var reKeyEvent = /^key/;
@@ -2416,7 +2600,7 @@ var Daft =
 
 	/***/
 },
-/* 21 */
+/* 24 */
 /***/function (module, exports) {
 
 	/**
@@ -2467,88 +2651,7 @@ var Daft =
 
 	/***/
 },
-/* 22 */
-/***/function (module, exports) {
-
-	'use strict';
-
-	var _createClass = function () {
-		function defineProperties(target, props) {
-			for (var i = 0; i < props.length; i++) {
-				var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-			}
-		}return function (Constructor, protoProps, staticProps) {
-			if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-		};
-	}();
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var Logger = function () {
-		function Logger(allow) {
-			_classCallCheck(this, Logger);
-
-			this.allow = allow;
-		}
-
-		_createClass(Logger, [{
-			key: 'log',
-			value: function log(msg) {
-				if (window.console.log && this.allow) {
-					if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
-						window.console.log(arguments[0], arguments[1]);
-					} else {
-						window.console.log(arguments[0]);
-					}
-				}
-			}
-		}, {
-			key: 'info',
-			value: function info() {
-				if (window.console.info && this.allow) {
-					if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
-						window.console.info(arguments[0], arguments[1]);
-					} else {
-						window.console.info(arguments[0]);
-					}
-				}
-			}
-		}, {
-			key: 'error',
-			value: function error() {
-				if (window.console.error && this.allow) {
-					if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
-						window.console.error(arguments[0], arguments[1]);
-					} else {
-						window.console.error(arguments[0]);
-					}
-				}
-			}
-		}, {
-			key: 'warn',
-			value: function warn() {
-				if (window.console.warn && this.allow) {
-					if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
-						window.console.warn(arguments[0], arguments[1]);
-					} else {
-						window.console.warn(arguments[0]);
-					}
-				}
-			}
-		}]);
-
-		return Logger;
-	}();
-
-	module.exports = Logger;
-
-	/***/
-},
-/* 23 */
+/* 25 */
 /***/function (module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2570,18 +2673,20 @@ var Daft =
 	}
 
 	// CREATES A NEW NAPESPACE
+	var WatchJS = __webpack_require__(26);
+	var Watch = WatchJS.watch;
+	var Daft = Daft || window.Daft;
+	var Dom = __webpack_require__(5);
+	var Utility = __webpack_require__(4);
 
 	var Namespace = function () {
 		function Namespace(namespace, userData, cb) {
 			_classCallCheck(this, Namespace);
 
-			var Daft = Daft || window.Daft;
-			var Dom = __webpack_require__(2);
-			var WatchJS = __webpack_require__(24);
-			var Watcher = __webpack_require__(25)([namespace + '-data']);
 			var self = this;
+			var Watcher = __webpack_require__(27)([namespace + '-data']);
 
-			self.watch = WatchJS.watch;
+			namespace = namespace.toLowerCase();
 
 			self.loaded = {
 				attempts: 0, // HOW MANY TIMES WE'VE TRIED TO FIRE LOAD EVENT
@@ -2599,40 +2704,18 @@ var Daft =
 			}
 
 			function watchData(scope, elements) {
-				// WATCH FOR CHANGES TO NS OBJECT
-
-				// self.watch(scope.domData[el.key], function () {
-				// // IF OBJECT CHANGES
-				//   var self = this
-				//   var element = Daft.dom(el.element)
-				//
-				//   if (typeof element.type !== 'undefined') {
-				//     console.log('set value', self.value)
-				//     Daft.dom(element).value(self.value)
-				//   } else {
-				//     console.log('set html', self.value)
-				//     console.log(element)
-				//     Daft.dom(element).html(self.value)
-				//   }
-				// })
-
-				console.log('scope', scope);
-				console.log('elements', elements);
+				// WATCH FOR CHANGES TO DOM DATA OBJECT
 
 				for (var key in elements) {
 					elements[key].forEach(function (el, key) {
-						var element = Daft.dom(el.element)[0];
+						var element = el.element;
 
-						if (typeof scope.domData[el.key] !== 'undefined') {
-							console.log('watch ' + el.key);
-							scope.watch(scope.domData[el.key], function () {
-								console.log('change to' + el.key, scope.domData[el.key]);
-								var val = scope.domData[el.key].value;
+						if (typeof scope.data[el.key] !== 'undefined') {
+							Watch(scope.data[el.key], function () {
+								var val = scope.data[el.key].value;
 								if (typeof element.type !== 'undefined') {
-									console.log('set value', scope.value);
 									Daft.dom(element).value(val);
 								} else {
-									console.log('set html', scope.value);
 									Daft.dom(element).html(val);
 								}
 							});
@@ -2645,31 +2728,45 @@ var Daft =
 			function registerTags(namespace) {
 				var elements = Dom('[namespace="' + namespace + '"] *');
 				var tags = [];
+				var skip = false;
 
 				elements = Array.prototype.slice.call(elements).filter(function (el) {
 					return el.localName.indexOf('-') !== -1 || el.getAttribute('is');
 				});
 
 				// LOOP THROUGH EACH CUSTOM ELEMENT
-				elements.forEach(function (value, key) {
-					var attrs = value.localName.split('-');
+				elements.forEach(function (el, key) {
+					var attrs = el.localName.split('-');
+
+					var root = false;
+
+					if (el.attributes['data-init']) root = true;
 
 					// MAKE SURE IT'S IN OUR NAMESPACE
 					if (attrs[0] === namespace) {
 						// ADD DATA TO ARRAY OF CUSTOM TAGS
 						tags.push({
-							key: value.localName.split(attrs[0] + '-')[1],
+							element: el,
+							key: el.localName.split(attrs[0] + '-')[1],
 							namespace: attrs[0],
-							tag: value.localName
+							root: root,
+							tag: el.localName,
+							value: el.innerHTML
 						});
 
-						// REGISTER ELEMENTS WITH THE DOM
-						try {
-							document.registerElement(value.localName);
-						} catch (e) {}
+						if (el.attributes[namespace + '-data']) {
+							if (el.localName.split('content-').join('') === el.attributes[namespace + '-data'].value) {
+								skip = true;
+							}
+						}
 
-						Dom(value).attr(namespace + '-data', value.localName.split(attrs[0] + '-')[1]);
+						if (!skip) Dom(el).attr(namespace + '-data', el.localName.split(attrs[0] + '-')[1]);
 					}
+
+					// REGISTER ELEMENTS WITH THE DOM
+					try {
+						document.registerElement(el.localName);
+					} catch (e) {}
 				});
 
 				return tags;
@@ -2677,43 +2774,37 @@ var Daft =
 
 			// POPULAR DOM DATA OBJECT BASED ON namespace-data OBJECTS
 			function populateDomData() {
-				self.domData = {};
+				self.data = {};
 
-				var datas = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]');
+				var domTags = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]');
 
 				self.customTags = registerTags(namespace);
 
-				// var datas = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]')
-
-				// console.log('custom', )
-
-				// GRAB ALL namespace-data ELEMENTS & APPEND TO DOM DATA
-				// datas.forEach(function (element, key) {
-				//   attributeData(element, key, datas)
-				// })
-
-				domData(self.customTags, datas);
+				data(self.customTags, domTags);
 			}
 
-			function domData(tags, datas) {
+			function data(tags, domTags) {
 				// COMBINE DATA FROM CUSTOM ELEMENTS & DATA ATTRIBUTES
 
-				var allElements = [];
+				var elementCollection = [];
+				var added = [];
 
 				// GET EACH STANDARD ELEMENT
-				datas.forEach(function (el) {
+				domTags.forEach(function (el) {
 					var root = false;
 					var key = el.attributes[namespace + '-data'].value;
 
 					if (el.attributes['data-init']) root = true;
 
-					if (typeof allElements[key] === 'undefined') {
-						allElements[key] = [];
-						allElements.length++;
+					if (typeof elementCollection[key] === 'undefined') {
+						elementCollection[key] = [];
+						elementCollection.length++;
 					}
 
+					added.push(el);
+
 					// SAVE DATA
-					allElements[key].push({
+					elementCollection[key].push({
 						element: el,
 						key: key,
 						namespace: namespace,
@@ -2727,27 +2818,42 @@ var Daft =
 				tags.forEach(function (element, key) {
 					Daft.dom(element.tag).forEach(function (el) {
 						var root = false;
+						var skip = false;
 
 						if (el.attributes['data-init']) root = true;
 
-						if (typeof allElements[element.key] === 'undefined') {
-							allElements[element.key] = [];
-							allElements.length++;
+						if (typeof elementCollection[element.key] === 'undefined') {
+							elementCollection[element.key] = [];
+							elementCollection.length++;
 						}
 
-						// GET EACH STANDARD ELEMENT
-						allElements[element.key].push({
-							element: el,
-							key: element.key,
-							namespace: element.namespace,
-							root: root,
-							tag: element.tag,
-							value: el.innerHTML
+						added.forEach(function (value, key) {
+							if (value === el) skip = true;
 						});
+
+						if (!skip) {
+							//   console.log('add', element)
+							elementCollection[element.key].push({
+								element: el,
+								key: element.key,
+								namespace: element.namespace,
+								root: root,
+								tag: element.tag,
+								value: el.innerHTML
+							});
+						}
 					});
 				});
 
-				populateData(allElements);
+				populateData(elementCollection);
+			}
+
+			function throwError(which, data) {
+				var messages = [];
+
+				messages.noRoot = console.error('Error populating ' + data.prop + ' data:\n\n' + 'Found multiple elements with "' + data.prop + '" data in "' + namespace + '" namespace, and could not determine default value. If you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in data object when creating the namespace:\n' + 'data: {\n' + '  ' + data.prop + ': {\n' + '    value: "hello world"\n' + '  }\n' + '}\n\n' + 'Alternatively, if you want to pull the default data from the dom, you can add a data-init attribute to one (and only one!) of these elements.');
+
+				return messages[which];
 			}
 
 			function populateData(elements) {
@@ -2755,6 +2861,9 @@ var Daft =
 
 				for (var key in elements) {
 					var qty = elements[key].length;
+					var root = false;
+					var jsData = false;
+
 					elements[key].forEach(function (el, key) {
 						var element = el.element;
 						var prop = el.key;
@@ -2763,8 +2872,7 @@ var Daft =
 						if (qty === 1 || el.root === true) {
 							if (typeof element.type !== 'undefined' && element.value !== '') value = element.value;
 							if (typeof element.innerHTML !== 'undefined' && element.innerHTML !== '') value = element.innerHTML;
-
-							self.domData[prop] = {
+							self.data[prop] = {
 								value: value,
 								previous: null
 							};
@@ -2774,55 +2882,51 @@ var Daft =
 						// TODO: REVISIT HOW THIS WORKS
 						if (typeof element.type !== 'undefined') {
 							element.addEventListener('input', function (e) {
-								self.domData[prop].value = e.target.value;
+								self.data[prop].value = e.target.value;
 								this.setSelectionRange(this.selectionStart, this.selectionEnd);
 							});
 						}
 
-						if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop] !== 'undefined') {
+						if (typeof userData.data !== 'undefined' && typeof userData.data[prop] !== 'undefined') {
 							// OVERRIDE DOM DATA WITH JS DATA IF THE EXISTS
 
-							if (typeof self.domData[prop] === 'undefined') {
+							if (typeof self.data[prop] === 'undefined') {
 								// CREATE DOM DATA FOR PROP IF IT DOESN'T EXIST
-								self.domData[prop] = { data: '', previous: null };
+								self.data[prop] = { data: '', previous: null };
 							}
 
 							// SET VALUE IF FORM FIELD
 							if (typeof element.type !== 'undefined') {
-								Dom(element).val(userData.domData[prop].value);
+								Dom(element).val(userData.data[prop].value);
 							} else {
 								// OTHERWISE SET HTML
-								Dom(element).html(userData.domData[prop].value);
+								Dom(element).html(userData.data[prop].value);
 							}
 
 							// UPDATE DOMDATA OBJECT
-							self.domData[prop].value = userData.domData[prop].value;
-							self.domData[prop].previous = value;
+							self.data[prop].value = userData.data[prop].value;
+							self.data[prop].previous = value;
+
+							jsData = true;
 						}
 
-						// if (self.domData[prop]) {
-						//
-						// }
+						if (el.root) root = true;
 
-						// ONCE ALL DATA HAS BEEN CHECKED
-						if (key === elements.length - 1) {
-							console.info('ALL DONE');
-							if (typeof self.domData[prop] === 'undefined') {
-								console.log('undefined data');
-								self.domData[prop] = {
-									value: '',
-									previous: null
-								};
-								// THROW AN ERROR IF WE CAN'T DETERMINE AN INITIAL DEFAULT VALUE
-								// TODO: ABSTRACT ERROR MESSAGES OUT INTO AN ERROR HANDLER SERVICE (ESPECIALLY SUCH IN-DEPTH MESSAGES)
-								console.error('Error populating ' + prop + ' data:\n\n' + 'Found ' + (elements.length - 1) + ' element(s) with ' + namespace + '-data="' + prop + '" attribute, and could not determine default value.\nIf you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in domData object when creating the namespace:\n' + 'domData: {\n' + '  ' + prop + ': {\n' + '    data: "my value"\n' + '  }\n' + '}\n\n' + 'Alternatively, if you want to pull the default data from the dom, you can add a data-init attribute to one (and only one!) of these elements: \n', elements, '\n\nmore info: http://docs.daftjs.com/namespace/data');
-							} else {
-								watchData(self, elements); // WATCH FOR CHANGES TO OUR DATA
-								setData(self, elements);
-							}
+						// IF WE HAVE MORE THAN ONE ELEMENT, MAKE SURE WE HAVE A ROOT ELEMENT TO SET DEFAULT VALUE
+						if (qty > 1 && key === qty - 1) {
+							// THROW AN ERROR IF WE CAN'T DETERMINE AN INITIAL DEFAULT VALUE
+							if (!root && !jsData) throwError('noRoot', { prop: prop, elements: elements });
+						} else {
+							setData(self, elements);
+							watchData(self, elements); // WATCH FOR CHANGES TO OUR DATA
 						}
-					}); // END LOOP
-				} // END LOOP
+
+						// JUST IN CASE WE STILL DON'T KNOW WHAT THE DOM DATA VALUE SHOULD BE
+						if (typeof self.data[prop] === 'undefined' && el.tag !== 'content-' + prop) {
+							self.data[prop] = { value: '', previous: null };
+						}
+					});
+				}
 			}
 
 			function setData(self, elements) {
@@ -2831,12 +2935,11 @@ var Daft =
 				for (var key in elements) {
 					elements[key].forEach(function (el, key) {
 						var element = Daft.dom(el.element)[0];
-						if (typeof self.domData[el.key] !== 'undefined') {
-							var val = self.domData[el.key].value;
+						if (typeof self.data[el.key] !== 'undefined') {
+							var val = self.data[el.key].value;
 							if (typeof element.type !== 'undefined') {
 								Daft.dom(element).value(val);
 							} else {
-								console.log('html', val);
 								Daft.dom(element).html(val);
 							}
 						}
@@ -2848,19 +2951,13 @@ var Daft =
 			self.container = Dom('[namespace="' + namespace + '"]')[0];
 
 			// SET NAMESPACE NAME
-			self.namespace = namespace;
+			self.name = Utility.setNamespace(namespace);
 
 			// POPULATE DOM DATA
 			populateDomData();
 
-			// SET ACTIONS
-			self.actions = {
-				test: self.test,
-				updateData: populateDomData
-			};
-
 			// ADD NAMESPACE TO NS OBJECT
-			Daft.App[namespace] = self;
+			Daft[Daft.name][self.name] = self;
 
 			// WATCH FOR ANY DOM CHANGES
 			self.observer = new Watcher.Observe(self.container);
@@ -2879,9 +2976,7 @@ var Daft =
 
 				if (self.loaded.success) {
 					if (typeof cb === 'function') {
-						(function () {
-							cb.call(self);
-						})(cb);
+						cb.call(self);
 					}
 				} else if (!self.loaded.success && self.loaded.attempts < fail) {
 					self.loaded.attempts++;
@@ -2893,7 +2988,7 @@ var Daft =
 						}
 					}, self.loaded.refresh);
 				} else {
-					cb(self, {
+					cb.call(self, {
 						msg: 'Failed to finish loading ' + self.namespace + ' namespace after ' + self.loaded.fail / 1000 + ' seconds'
 					});
 				}
@@ -2907,7 +3002,7 @@ var Daft =
 
 	/***/
 },
-/* 24 */
+/* 26 */
 /***/function (module, exports, __webpack_require__) {
 
 	/**
@@ -3250,18 +3345,19 @@ var Daft =
 
 	/***/
 },
-/* 25 */
-/***/function (module, exports) {
+/* 27 */
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
-		return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+		return typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
 	} : function (obj) {
-		return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+		return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
 	};
 
 	// WATCHES OUR NAMESPACE AND REPORT ON ANY CHANGES
+	var Utility = __webpack_require__(4);
 
 	module.exports = function (attrs) {
 		var MutationObserver = MutationObserver || window.MutationObserver;
@@ -3271,8 +3367,8 @@ var Daft =
 			// CHECK IF A NAMESPACE EXISTS, AND RETURN THE OBJECT IF IT DOES
 
 			// IF NAMESPACE EXISTS
-			if (_typeof(Daft.App[namespace]) === 'object') {
-				return Daft.App[namespace];
+			if (_typeof(Daft[Daft.name][Utility.setNamespace(namespace)]) === 'object') {
+				return Daft[Daft.name][Utility.setNamespace(namespace)];
 				// IF NAMESPACE DOES NOT EXIST
 			} else {
 					return false;
@@ -3280,8 +3376,6 @@ var Daft =
 		}
 
 		function getNameSpace(mutation) {
-			//
-
 			var attributes = null;
 			var namespace = null;
 			var parent = null;
@@ -3302,7 +3396,7 @@ var Daft =
 		function getAttrs(el, namespace) {
 			// GET ATTRIBUTES OF PARENT ELEMENT
 
-			el = Daft.dom(el.target.parentElement)[0].closest('[' + namespace.namespace + '-data]');
+			el = Daft.dom(el.target.parentElement)[0].closest('[' + namespace.name.toLowerCase() + '-data]');
 
 			if (typeof el !== 'undefined' && el !== null) {
 				return el.attributes;
@@ -3316,7 +3410,7 @@ var Daft =
 
 			var args = [];
 			var func = false;
-			var obj = window.Daft.App[NS.namespace.namespace];
+			var obj = window.Daft[Daft.name][NS.namespace.name];
 
 			// IF ACTUAL FUNCTION WAS PASSED & NOT JUST A NAME OF A FUNCTION
 			if (fn !== null && fn.indexOf('(') > 0) {
@@ -3337,7 +3431,7 @@ var Daft =
 					// CHECK IF A FUNCTION EXISTS IN GLOBAL NAMESPACE
 				} else if (typeof window[fn] === 'function') {
 						func = window[fn];
-						console.warn('WARNING:', fn + ' function exists as a global. You should define it as a part of your ' + NS.namespace.namespace + ' namespace instead: http://docs.daftjs.com/namespace/functions');
+						console.warn('WARNING:', fn + ' function exists as a global. You should define it as a part of your ' + NS.namespace.name + ' namespace instead: http://docs.daftjs.com/namespace/functions');
 					}
 
 			return {
@@ -3352,14 +3446,15 @@ var Daft =
 
 			var dataKey = null;
 			var updateFunction = null;
+			var dataAttribute = NS.namespace.name.toLowerCase() + '-data';
 
 			if (NS.attributes !== null) {
 				if (typeof NS.attributes['daft-update'] !== 'undefined') {
 					updateFunction = NS.attributes['daft-update'].value;
 				}
 
-				if (typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
-					dataKey = NS.attributes[NS.namespace.namespace + '-data'].value;
+				if (typeof NS.attributes[dataAttribute] !== 'undefined') {
+					dataKey = NS.attributes[dataAttribute].value;
 				}
 
 				// IF AN UPDATE FUNCTION WAS PROVIDED
@@ -3397,13 +3492,13 @@ var Daft =
 				}
 			}
 
-			if (mutation.target.nodeValue !== null && typeof NS.attributes[NS.namespace.namespace + '-data'] !== 'undefined') {
-				dataKey = NS.attributes[NS.namespace.namespace + '-data'].value;
+			if (mutation.target.nodeValue !== null && typeof NS.attributes[dataAttribute] !== 'undefined') {
+				dataKey = NS.attributes[dataAttribute].value;
 
 				// UPDATE OBJECT WITH NEW VALUE
-				Daft.App[NS.namespace.namespace].domData[dataKey].value = mutation.target.nodeValue;
+				Daft[Daft.name][NS.namespace.name].data[dataKey].value = mutation.target.nodeValue;
 				// AND PREVIOUS VALUE
-				Daft.App[NS.namespace.namespace].domData[dataKey].previous = mutation.oldValue;
+				Daft[Daft.name][NS.namespace.name].data[dataKey].previous = mutation.oldValue;
 			}
 		}
 
