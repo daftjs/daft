@@ -9,8 +9,14 @@ body, html {
 }
 
 h1, h2, h3, h4, h5, h6 {
+}
+
+h1, h2 {
   font-weight: 100;
-  // margin: 0px;
+}
+
+h3, h4, h5, h6 {
+  font-weight: 300;
 }
 
 p {
@@ -26,6 +32,11 @@ p {
     border-color: red;
     // color: red;
   }
+}
+
+span[contentEditable] {
+  display: inline-block;
+  min-width: 40px;
 }
 
 input {

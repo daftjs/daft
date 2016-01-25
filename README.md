@@ -7,7 +7,7 @@
 [![npm downloads](https://img.shields.io/npm/dt/daft.svg?style=flat-square)]()
 
 
-A tiny (22k), über-modern, probably wont work in your mum's browser, isomorphic-friendly JavaScript framework.
+A tiny (<50k), über-modern, isomorphic-friendly, probably wont work in your mum's browser, JavaScript framework.
 
 *[ Work In Progress ]*
 
@@ -17,7 +17,7 @@ A tiny (22k), über-modern, probably wont work in your mum's browser, isomorphic
 ##### BOWER
 `bower install daft`
 
-##### ^ Do not do any of this yet as it will probably break and make you cry.
+##### ^ Do not do actually do any of these things yet as it will probably break and make you cry.
 
 ---
 
@@ -28,19 +28,25 @@ A tiny (22k), über-modern, probably wont work in your mum's browser, isomorphic
 
 ## Namespaces
 
-*^ This is a bad name for this and will probably change.*
-
 The first thing you will want to do is create a namespace for an area of your app. Think of this similar to controllers in Angular. For example:
 
 ##### JS
 ```
-new Daft.Namespace('headSpace', {
+// CREATE A NAMESPACE
+var headSpace = new Daft.Namespace('headSpace', {
   domData: {
     status: {
       data: 'Page loaded!'
     }
-  },
-  onHeaderUpdate: function () {
+  }
+})
+
+// PUT ANY CODE THAT RELIES ON YOUR NAMESPACE HAVING BEEN CREATED HERE (TOTES OPTIONAL)
+headSpace.onload(function () {
+
+  // UPDATE FUNCTION (ALSO OPTIONAL)
+  // SHOULD BE NAMED WHATEVER YOU PUT IN THE daft-update ATTRIBUTE
+  headSpace.onHeaderUpdate = function () {
     console.log('Page header was updated')
   }
 

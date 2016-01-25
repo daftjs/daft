@@ -6,8 +6,11 @@ body, html {
   background: #fff;
   font-family: 'helvetica neue', helvetica, arial; }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2 {
   font-weight: 100; }
+
+h3, h4, h5, h6 {
+  font-weight: 300; }
 
 p {
   margin: 0px 0px 10px 0px; }
@@ -18,6 +21,10 @@ p {
   padding-bottom: 3px; }
   [contentEditable]:focus {
     border-color: red; }
+
+span[contentEditable] {
+  display: inline-block;
+  min-width: 40px; }
 
 input {
   box-sizing: border-box;

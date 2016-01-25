@@ -3,18 +3,20 @@ window.define(function (require) {
 
   // SETUP OUR HEADER NAMESPACE
   var Header = new Daft.Namespace('header', {
-    domData: {
-      subtitle: {
-        data: 'Hello Daft'
-      }
-    },
-    onTitleUpdate: function () {
-      console.log('Header.onTitleUpdate()')
+    onTitleUpdate: function (data) {
+      console.log(this.namespace + ' ' + data.key + ' changed from ' + data.previous + ' to ' + data.value)
     }
   })
 
   // ONLOAD
   Header.onload(function (err) {
-    if (!err) Daft.info('Header namespace loaded') // IF WE GET AN ERROR
+    if (err) Daft.error('Error loading eader namespace') // IF WE GET AN ERROR
+
+    Daft.info('Header namespace loaded')
+
+    var self = this
+    var data = self.domData
+
+    // data.title.value = 'Daft.js - Loaded'
   })
 })

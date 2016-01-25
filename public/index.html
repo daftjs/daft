@@ -8,21 +8,24 @@
   </head>
   <body>
 
-    <section namespace="header">
-      <h1 contentEditable="true" header-data="title" daft-update="onTitleUpdate">Daft.js</h1>
-      <span header-data="subtitle"></span>
-    </section>
+    <header namespace="header">
+      <h1 data-init header-data="title" daft-update="onTitleUpdate">Daft.js</h1>
+      <header-title>Waiting for name...</header-title>
+    </header>
 
     <br>
 
     <section namespace="content">
-      <h3 data-init content-data="message" contentEditable="true"></h3>
-      <h5>echo <span content-data="message"></span></h5>
-      <p content-data="message"></p>
+      <h2>Hello, my name is:<span id="name-init" data-init contentEditable="true" content-data="name">Bob</span></h2>
+      <content-greeting class="" content-data="greeting">Please enter your name above so I know what to call you!</content-greeting>
 
-      <input type="text" name="name" content-data="message" style="width:100%">
+      <content-name daft-update="nameChange">Waiting for name 1...</content-name>
+      <content-name>Waiting for name 2...</content-name><br>
+      <content-multiple-dash-key></content-multiple-dash-key>
 
     </section>
+
+    <br><br>
 
     <script src="js/daft.js"></script>
 

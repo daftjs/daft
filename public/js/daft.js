@@ -78,14 +78,11 @@ var Daft =
 	      }
 	    };
 
-	    self.bootstrap = {
-	      Dom: __webpack_require__(2), // DOM FUNCTIONS
-	      Logger: __webpack_require__(22) // LOGGING
-	    };
+	    self.Logger = __webpack_require__(2); // LOGGING
 
-	    self.dom = self.bootstrap.Dom;
+	    self.dom = __webpack_require__(3);
 	    self.Namespace = __webpack_require__(23);
-	    self.NS = {};
+	    self.App = {};
 	  }
 
 	  // LOGGING ALIAS'
@@ -93,22 +90,22 @@ var Daft =
 	  _createClass(DaftJS, [{
 	    key: 'error',
 	    value: function error() {
-	      new this.bootstrap.Logger(this.config.logging.console).error(arguments[0], arguments[1]);
+	      new this.Logger(this.config.logging.console).error(arguments[0], arguments[1]);
 	    }
 	  }, {
 	    key: 'info',
 	    value: function info() {
-	      new this.bootstrap.Logger(this.config.logging.console).info(arguments[0], arguments[1]);
+	      new this.Logger(this.config.logging.console).info(arguments[0], arguments[1]);
 	    }
 	  }, {
 	    key: 'log',
 	    value: function log() {
-	      new this.bootstrap.Logger(this.config.logging.console).log(arguments[0], arguments[1]);
+	      new this.Logger(this.config.logging.console).log(arguments[0], arguments[1]);
 	    }
 	  }, {
 	    key: 'warn',
 	    value: function warn() {
-	      new this.bootstrap.Logger(this.config.logging.console).warn(arguments[0], arguments[1]);
+	      new this.Logger(this.config.logging.console).warn(arguments[0], arguments[1]);
 	    }
 
 	    // READY EVENT FIRED WHEN EVERYTHING IS LOADED
@@ -118,7 +115,7 @@ var Daft =
 	    value: function ready(cb) {
 	      this.dom(document).ready(function () {
 	        if (window.Daft) {
-	          cb();
+	          cb.apply(this);
 	        } else {
 	          console.error('Error:', 'Daft could not be loaded');
 	        }
@@ -133,6 +130,74 @@ var Daft =
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Logger = function () {
+	  function Logger(allow) {
+	    _classCallCheck(this, Logger);
+
+	    this.allow = allow;
+	  }
+
+	  _createClass(Logger, [{
+	    key: 'log',
+	    value: function log(msg) {
+	      if (window.console.log && this.allow) {
+	        if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
+	          window.console.log(arguments[0], arguments[1]);
+	        } else {
+	          window.console.log(arguments[0]);
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'info',
+	    value: function info() {
+	      if (window.console.info && this.allow) {
+	        if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
+	          window.console.info(arguments[0], arguments[1]);
+	        } else {
+	          window.console.info(arguments[0]);
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'error',
+	    value: function error() {
+	      if (window.console.error && this.allow) {
+	        if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
+	          window.console.error(arguments[0], arguments[1]);
+	        } else {
+	          window.console.error(arguments[0]);
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'warn',
+	    value: function warn() {
+	      if (window.console.warn && this.allow) {
+	        if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
+	          window.console.warn(arguments[0], arguments[1]);
+	        } else {
+	          window.console.warn(arguments[0]);
+	        }
+	      }
+	    }
+	  }]);
+
+	  return Logger;
+	}();
+
+	module.exports = Logger;
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -147,79 +212,79 @@ var Daft =
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	// Import modules to build up the API
 
-	var _array = __webpack_require__(4);
+	var _array = __webpack_require__(5);
 
 	var array = _interopRequireWildcard(_array);
 
-	var _baseClass = __webpack_require__(6);
+	var _baseClass = __webpack_require__(7);
 
 	var _baseClass2 = _interopRequireDefault(_baseClass);
 
-	var _domAttr = __webpack_require__(7);
+	var _domAttr = __webpack_require__(8);
 
 	var attr = _interopRequireWildcard(_domAttr);
 
-	var _domClass = __webpack_require__(8);
+	var _domClass = __webpack_require__(9);
 
 	var class_ = _interopRequireWildcard(_domClass);
 
-	var _domContains = __webpack_require__(9);
+	var _domContains = __webpack_require__(10);
 
 	var contains = _interopRequireWildcard(_domContains);
 
-	var _css = __webpack_require__(10);
+	var _css = __webpack_require__(11);
 
 	var css = _interopRequireWildcard(_css);
 
-	var _domData = __webpack_require__(11);
+	var _domData = __webpack_require__(12);
 
 	var data = _interopRequireWildcard(_domData);
 
-	var _domIndex = __webpack_require__(12);
+	var _domIndex = __webpack_require__(13);
 
 	var dom = _interopRequireWildcard(_domIndex);
 
-	var _domExtra = __webpack_require__(13);
+	var _domExtra = __webpack_require__(14);
 
 	var dom_extra = _interopRequireWildcard(_domExtra);
 
-	var _eventIndex = __webpack_require__(14);
+	var _eventIndex = __webpack_require__(15);
 
 	var event = _interopRequireWildcard(_eventIndex);
 
-	var _domHtml = __webpack_require__(16);
+	var _domHtml = __webpack_require__(17);
 
 	var html = _interopRequireWildcard(_domHtml);
 
-	var _noconflict = __webpack_require__(17);
+	var _noconflict = __webpack_require__(18);
 
 	var noconflict = _interopRequireWildcard(_noconflict);
 
-	var _eventReady = __webpack_require__(18);
+	var _eventReady = __webpack_require__(19);
 
 	var ready = _interopRequireWildcard(_eventReady);
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(6);
 
 	var selector = _interopRequireWildcard(_selectorIndex);
 
-	var _selectorClosest = __webpack_require__(15);
+	var _selectorClosest = __webpack_require__(16);
 
 	var closest = _interopRequireWildcard(_selectorClosest);
 
-	var _selectorExtra = __webpack_require__(19);
+	var _selectorExtra = __webpack_require__(20);
 
 	var selector_extra = _interopRequireWildcard(_selectorExtra);
 
-	var _eventTrigger = __webpack_require__(20);
+	var _eventTrigger = __webpack_require__(21);
 
 	var trigger = _interopRequireWildcard(_eventTrigger);
 
-	var _type = __webpack_require__(21);
+	var _type = __webpack_require__(22);
 
 	var type = _interopRequireWildcard(_type);
 
@@ -261,7 +326,7 @@ var Daft =
 	module.exports = exports['default'];
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	/*
@@ -369,7 +434,7 @@ var Daft =
 	exports.uniq = uniq;
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -380,9 +445,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(6);
 
 	var ArrayProto = Array.prototype;
 
@@ -588,7 +653,7 @@ var Daft =
 	exports.unshift = unshift;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -599,7 +664,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	var isPrototypeSet = false;
 
@@ -791,7 +856,7 @@ var Daft =
 	exports.Wrapper = Wrapper;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -804,9 +869,9 @@ var Daft =
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(6);
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	exports['default'] = function (api) {
 
@@ -853,7 +918,7 @@ var Daft =
 	module.exports = exports['default'];
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -864,7 +929,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	/**
 	 * Get the value of an attribute for the first element, or set one or more attributes for each element in the collection.
@@ -924,7 +989,7 @@ var Daft =
 	exports.removeAttr = removeAttr;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -935,7 +1000,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	/**
 	 * Add a class to the element(s)
@@ -1031,7 +1096,7 @@ var Daft =
 	exports.hasClass = hasClass;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	/**
@@ -1070,7 +1135,7 @@ var Daft =
 	exports.contains = contains;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1081,7 +1146,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	var isNumeric = function isNumeric(value) {
 	    return !isNaN(parseFloat(value)) && isFinite(value);
@@ -1159,7 +1224,7 @@ var Daft =
 	exports.css = css;
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1170,7 +1235,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	var DATAKEYPROP = '__DOMTASTIC_DATA__';
 
@@ -1235,7 +1300,7 @@ var Daft =
 	exports.prop = prop;
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1246,9 +1311,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(6);
 
 	var forEach = Array.prototype.forEach;
 
@@ -1428,7 +1493,7 @@ var Daft =
 	exports.clone = clone;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1439,11 +1504,11 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
-	var _index = __webpack_require__(12);
+	var _index = __webpack_require__(13);
 
-	var _selectorIndex = __webpack_require__(5);
+	var _selectorIndex = __webpack_require__(6);
 
 	/**
 	 * Append each element in the collection to the specified element(s).
@@ -1560,7 +1625,7 @@ var Daft =
 	exports.val = val;
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1571,9 +1636,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
-	var _selectorClosest = __webpack_require__(15);
+	var _selectorClosest = __webpack_require__(16);
 
 	/**
 	 * Shorthand for `addEventListener`. Supports event delegation if a filter (`selector`) is provided.
@@ -1815,7 +1880,7 @@ var Daft =
 	exports.unbind = unbind;
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1826,9 +1891,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _index = __webpack_require__(5);
+	var _index = __webpack_require__(6);
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	/**
 	 * Return the closest element matching the selector (starting by itself) for each element in the collection.
@@ -1888,7 +1953,7 @@ var Daft =
 	exports.closest = closest;
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1899,7 +1964,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	/*
 	 * Get the HTML contents of the first element, or set the HTML contents for each element in the collection.
@@ -1933,7 +1998,7 @@ var Daft =
 	exports.html = html;
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1944,7 +2009,7 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
 	/*
 	 * Save the previous value of the global `$` variable, so that it can be restored later on.
@@ -1974,7 +2039,7 @@ var Daft =
 	exports.noConflict = noConflict;
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	/**
@@ -2010,7 +2075,7 @@ var Daft =
 	exports.ready = ready;
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2021,9 +2086,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
-	var _index = __webpack_require__(5);
+	var _index = __webpack_require__(6);
 
 	/**
 	 * Return children of each element in the collection, optionally filtered by a selector.
@@ -2167,7 +2232,7 @@ var Daft =
 	exports.slice = slice;
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2178,9 +2243,9 @@ var Daft =
 
 	exports.__esModule = true;
 
-	var _util = __webpack_require__(3);
+	var _util = __webpack_require__(4);
 
-	var _domContains = __webpack_require__(9);
+	var _domContains = __webpack_require__(10);
 
 	var reMouseEvent = /^(?:mouse|pointer|contextmenu)|click/;
 	var reKeyEvent = /^key/;
@@ -2362,7 +2427,7 @@ var Daft =
 	exports.triggerHandler = triggerHandler;
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/**
@@ -2412,74 +2477,6 @@ var Daft =
 	exports.isFunction = isFunction;
 
 /***/ },
-/* 22 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var Logger = function () {
-	  function Logger(allow) {
-	    _classCallCheck(this, Logger);
-
-	    this.allow = allow;
-	  }
-
-	  _createClass(Logger, [{
-	    key: 'log',
-	    value: function log(msg) {
-	      if (window.console.log && this.allow) {
-	        if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
-	          window.console.log(arguments[0], arguments[1]);
-	        } else {
-	          window.console.log(arguments[0]);
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'info',
-	    value: function info() {
-	      if (window.console.info && this.allow) {
-	        if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
-	          window.console.info(arguments[0], arguments[1]);
-	        } else {
-	          window.console.info(arguments[0]);
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'error',
-	    value: function error() {
-	      if (window.console.error && this.allow) {
-	        if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
-	          window.console.error(arguments[0], arguments[1]);
-	        } else {
-	          window.console.error(arguments[0]);
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'warn',
-	    value: function warn() {
-	      if (window.console.warn && this.allow) {
-	        if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
-	          window.console.warn(arguments[0], arguments[1]);
-	        } else {
-	          window.console.warn(arguments[0]);
-	        }
-	      }
-	    }
-	  }]);
-
-	  return Logger;
-	}();
-
-	module.exports = Logger;
-
-/***/ },
 /* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -2496,7 +2493,7 @@ var Daft =
 	    _classCallCheck(this, Namespace);
 
 	    var Daft = Daft || window.Daft;
-	    var Dom = __webpack_require__(2);
+	    var Dom = __webpack_require__(3);
 	    var WatchJS = __webpack_require__(24);
 	    var Watcher = __webpack_require__(25)([namespace + '-data']);
 	    var self = this;
@@ -2518,20 +2515,81 @@ var Daft =
 	      self[key] = userData[key];
 	    }
 
-	    function watchData(scope, prop) {
+	    function watchData(scope, elements) {
 	      // WATCH FOR CHANGES TO NS OBJECT
-	      self.watch(scope.domData[prop], function () {
-	        // IF OBJECT CHANGES
-	        var self = this;
 
-	        Daft.dom('[' + namespace + '-data="' + prop + '"]').forEach(function (value, key) {
-	          if (typeof value.type !== 'undefined') {
-	            Daft.dom(value).val(self.data);
-	          } else {
-	            Daft.dom(value).html(self.data);
+	      // self.watch(scope.domData[el.key], function () {
+	      // // IF OBJECT CHANGES
+	      //   var self = this
+	      //   var element = Daft.dom(el.element)
+	      //
+	      //   if (typeof element.type !== 'undefined') {
+	      //     console.log('set value', self.value)
+	      //     Daft.dom(element).value(self.value)
+	      //   } else {
+	      //     console.log('set html', self.value)
+	      //     console.log(element)
+	      //     Daft.dom(element).html(self.value)
+	      //   }
+	      // })
+
+	      console.log('scope', scope);
+	      console.log('elements', elements);
+
+	      for (var key in elements) {
+	        elements[key].forEach(function (el, key) {
+	          var element = Daft.dom(el.element)[0];
+
+	          if (typeof scope.domData[el.key] !== 'undefined') {
+	            console.log('watch ' + el.key);
+	            scope.watch(scope.domData[el.key], function () {
+	              console.log('change to' + el.key, scope.domData[el.key]);
+	              var val = scope.domData[el.key].value;
+	              if (typeof element.type !== 'undefined') {
+	                console.log('set value', scope.value);
+	                Daft.dom(element).value(val);
+	              } else {
+	                console.log('set html', scope.value);
+	                Daft.dom(element).html(val);
+	              }
+	            });
 	          }
 	        });
+	      }
+	    }
+
+	    // GET ALL CUSTOM DOM TAGS FOR NAMESPACE: <namespace-key>
+	    function registerTags(namespace) {
+	      var elements = Dom('[namespace="' + namespace + '"] *');
+	      var tags = [];
+
+	      elements = Array.prototype.slice.call(elements).filter(function (el) {
+	        return el.localName.indexOf('-') !== -1 || el.getAttribute('is');
 	      });
+
+	      // LOOP THROUGH EACH CUSTOM ELEMENT
+	      elements.forEach(function (value, key) {
+	        var attrs = value.localName.split('-');
+
+	        // MAKE SURE IT'S IN OUR NAMESPACE
+	        if (attrs[0] === namespace) {
+	          // ADD DATA TO ARRAY OF CUSTOM TAGS
+	          tags.push({
+	            key: value.localName.split(attrs[0] + '-')[1],
+	            namespace: attrs[0],
+	            tag: value.localName
+	          });
+
+	          // REGISTER ELEMENTS WITH THE DOM
+	          try {
+	            document.registerElement(value.localName);
+	          } catch (e) {}
+
+	          Dom(value).attr(namespace + '-data', value.localName.split(attrs[0] + '-')[1]);
+	        }
+	      });
+
+	      return tags;
 	    }
 
 	    // POPULAR DOM DATA OBJECT BASED ON namespace-data OBJECTS
@@ -2540,85 +2598,167 @@ var Daft =
 
 	      var datas = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]');
 
+	      self.customTags = registerTags(namespace);
+
+	      // var datas = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]')
+
+	      // console.log('custom', )
+
 	      // GRAB ALL namespace-data ELEMENTS & APPEND TO DOM DATA
-	      datas.forEach(function (element, key) {
-	        var prop = element.attributes[namespace + '-data'].value;
-	        var qty = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data="' + prop + '"]').length;
-	        var value = '';
+	      // datas.forEach(function (element, key) {
+	      //   attributeData(element, key, datas)
+	      // })
 
-	        if (qty === 1 || typeof element.attributes['data-init'] !== 'undefined') {
-	          if (typeof element.type !== 'undefined' && element.value !== '') value = element.value;
-	          if (typeof element.innerHTML !== 'undefined' && element.innerHTML !== '') value = element.innerHTML;
-
-	          self.domData[prop] = {
-	            data: value,
-	            previous: null
-	          };
-	        }
-
-	        // ON CHANGE EVENT FOR FORM ELEMENTS
-	        // TODO: REVISIT HOW THIS WORKS
-	        if (typeof element.type !== 'undefined') {
-	          element.addEventListener('input', function (e) {
-	            self.domData[prop].data = e.target.value;
-	            this.setSelectionRange(this.selectionStart, this.selectionEnd);
-	          });
-	        }
-
-	        if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop] !== 'undefined') {
-	          // OVERRIDE DOM DATA WITH JS DATA IF THE EXISTS
-
-	          if (typeof self.domData[prop] === 'undefined') {
-	            // CREATE DOM DATA FOR PROP IF IT DOESN'T EXIST
-	            self.domData[prop] = { data: '', previous: null };
-	          }
-
-	          // SET VALUE IF FORM FIELD
-	          if (typeof Dom(element)[0].type !== 'undefined') {
-	            Dom(element).val(userData.domData[prop].data);
-	          } else {
-	            // OTHERWISE SET HTML
-	            Dom(element).html(userData.domData[prop].data);
-	          }
-
-	          // UPDATE DOMDATA OBJECT
-	          self.domData[prop].data = userData.domData[prop].data;
-	          self.domData[prop].previous = value;
-	        }
-
-	        watchData(self, prop); // WATCH FOR CHANGES TO OUR DATA
-
-	        // ONCE ALL DATA HAS BEEN CHECKED
-	        if (key === datas.length - 1) {
-	          if (typeof self.domData[prop] === 'undefined') {
-	            self.domData[prop] = {
-	              data: '',
-	              previous: null
-	            };
-	            // THROW AN ERROR IF WE CAN'T DETERMINE AN INITIAL DEFAULT VALUE
-	            // TODO: ABSTRACT ERROR MESSAGES OUT INTO AN ERROR HANDLER SERVICE (ESPECIALLY SUCH IN-DEPTH MESSAGES)
-	            console.error('Error populating ' + prop + ' data:\n\n' + 'Found ' + (datas.length - 1) + ' element(s) with ' + namespace + '-data="' + prop + '" attribute, and could not determine default value.\nIf you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in domData object when creating the namespace:\n' + 'domData: {\n' + '  ' + prop + ': {\n' + '    data: "my value"\n' + '  }\n' + '}\n\n' + 'Alternatively, if you want to pull the default data from the dom, you can add an init-data attribute to one (and only one!) of these elements: \n', datas, '\n\nmore info: http://docs.daftjs.com/namespace/data');
-	          } else {
-	            setData(self, prop);
-	          }
-	        }
-
-	        // END
-	      });
+	      domData(self.customTags, datas);
 	    }
 
-	    function setData(self, prop) {
-	      // SET DOM DATA
+	    function domData(tags, datas) {
+	      // COMBINE DATA FROM CUSTOM ELEMENTS & DATA ATTRIBUTES
 
-	      var datas = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data="' + prop + '"]');
+	      var allElements = [];
 
-	      datas.forEach(function (element, key) {
-	        if (typeof element.type !== 'undefined' && element.value !== '') {
-	          Daft.dom(element).val(self.domData[prop].data);
-	        } else {
-	          Daft.dom(element).html(self.domData[prop].data);
+	      // GET EACH STANDARD ELEMENT
+	      datas.forEach(function (el) {
+	        var root = false;
+	        var key = el.attributes[namespace + '-data'].value;
+
+	        if (el.attributes['data-init']) root = true;
+
+	        if (typeof allElements[key] === 'undefined') {
+	          allElements[key] = [];
+	          allElements.length++;
 	        }
+
+	        // SAVE DATA
+	        allElements[key].push({
+	          element: el,
+	          key: key,
+	          namespace: namespace,
+	          root: root,
+	          tag: el.localName,
+	          value: el.innerHTML
+	        });
 	      });
+
+	      // GET EACH CUSTOM ELEMENT
+	      tags.forEach(function (element, key) {
+	        Daft.dom(element.tag).forEach(function (el) {
+	          var root = false;
+
+	          if (el.attributes['data-init']) root = true;
+
+	          if (typeof allElements[element.key] === 'undefined') {
+	            allElements[element.key] = [];
+	            allElements.length++;
+	          }
+
+	          // GET EACH STANDARD ELEMENT
+	          allElements[element.key].push({
+	            element: el,
+	            key: element.key,
+	            namespace: element.namespace,
+	            root: root,
+	            tag: element.tag,
+	            value: el.innerHTML
+	          });
+	        });
+	      });
+
+	      populateData(allElements);
+	    }
+
+	    function populateData(elements) {
+	      // POPULATE DATA FROM DOM ELEMENTS
+
+	      for (var key in elements) {
+	        var qty = elements[key].length;
+	        elements[key].forEach(function (el, key) {
+	          var element = el.element;
+	          var prop = el.key;
+	          var value = '';
+
+	          if (qty === 1 || el.root === true) {
+	            if (typeof element.type !== 'undefined' && element.value !== '') value = element.value;
+	            if (typeof element.innerHTML !== 'undefined' && element.innerHTML !== '') value = element.innerHTML;
+
+	            self.domData[prop] = {
+	              value: value,
+	              previous: null
+	            };
+	          }
+
+	          // ON CHANGE EVENT FOR FORM ELEMENTS
+	          // TODO: REVISIT HOW THIS WORKS
+	          if (typeof element.type !== 'undefined') {
+	            element.addEventListener('input', function (e) {
+	              self.domData[prop].value = e.target.value;
+	              this.setSelectionRange(this.selectionStart, this.selectionEnd);
+	            });
+	          }
+
+	          if (typeof userData.domData !== 'undefined' && typeof userData.domData[prop] !== 'undefined') {
+	            // OVERRIDE DOM DATA WITH JS DATA IF THE EXISTS
+
+	            if (typeof self.domData[prop] === 'undefined') {
+	              // CREATE DOM DATA FOR PROP IF IT DOESN'T EXIST
+	              self.domData[prop] = { data: '', previous: null };
+	            }
+
+	            // SET VALUE IF FORM FIELD
+	            if (typeof element.type !== 'undefined') {
+	              Dom(element).val(userData.domData[prop].value);
+	            } else {
+	              // OTHERWISE SET HTML
+	              Dom(element).html(userData.domData[prop].value);
+	            }
+
+	            // UPDATE DOMDATA OBJECT
+	            self.domData[prop].value = userData.domData[prop].value;
+	            self.domData[prop].previous = value;
+	          }
+
+	          // if (self.domData[prop]) {
+	          //
+	          // }
+
+	          // ONCE ALL DATA HAS BEEN CHECKED
+	          if (key === elements.length - 1) {
+	            console.info('ALL DONE');
+	            if (typeof self.domData[prop] === 'undefined') {
+	              console.log('undefined data');
+	              self.domData[prop] = {
+	                value: '',
+	                previous: null
+	              };
+	              // THROW AN ERROR IF WE CAN'T DETERMINE AN INITIAL DEFAULT VALUE
+	              // TODO: ABSTRACT ERROR MESSAGES OUT INTO AN ERROR HANDLER SERVICE (ESPECIALLY SUCH IN-DEPTH MESSAGES)
+	              console.error('Error populating ' + prop + ' data:\n\n' + 'Found ' + (elements.length - 1) + ' element(s) with ' + namespace + '-data="' + prop + '" attribute, and could not determine default value.\nIf you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in domData object when creating the namespace:\n' + 'domData: {\n' + '  ' + prop + ': {\n' + '    data: "my value"\n' + '  }\n' + '}\n\n' + 'Alternatively, if you want to pull the default data from the dom, you can add a data-init attribute to one (and only one!) of these elements: \n', elements, '\n\nmore info: http://docs.daftjs.com/namespace/data');
+	            } else {
+	              watchData(self, elements); // WATCH FOR CHANGES TO OUR DATA
+	              setData(self, elements);
+	            }
+	          }
+	        }); // END LOOP
+	      } // END LOOP
+	    }
+
+	    function setData(self, elements) {
+	      // SET DOM DATA FOR EACH ELEMENT
+
+	      for (var key in elements) {
+	        elements[key].forEach(function (el, key) {
+	          var element = Daft.dom(el.element)[0];
+	          if (typeof self.domData[el.key] !== 'undefined') {
+	            var val = self.domData[el.key].value;
+	            if (typeof element.type !== 'undefined') {
+	              Daft.dom(element).value(val);
+	            } else {
+	              console.log('html', val);
+	              Daft.dom(element).html(val);
+	            }
+	          }
+	        });
+	      }
 	    }
 
 	    // SET PARENT COMTAINER
@@ -2637,34 +2777,29 @@ var Daft =
 	    };
 
 	    // ADD NAMESPACE TO NS OBJECT
-	    Daft.NS[namespace] = self;
+	    Daft.App[namespace] = self;
 
 	    // WATCH FOR ANY DOM CHANGES
 	    self.observer = new Watcher.Observe(self.container);
 
-	    // ALLOW FOR CALLBACK AS LAST PARAMETER
-	    // TODO: CONSIDER DELETING SINCE WE HAVE ONLOAD NOW
-	    if (typeof cb === 'function') cb();
-
-	    // INFORM ONLOAD WE ARE ALL FINISHED
-	    self.loaded.success = true;
+	    self.loaded.success = true; // INFORM ONLOAD FUNCTION WE'RE ALL FINISHED
 	  }
 
 	  _createClass(Namespace, [{
-	    key: 'onUpdate',
-	    value: function onUpdate(cb) {
-	      if (typeof cb === 'function') cb();
-	    }
-	  }, {
 	    key: 'onload',
 	    value: function onload(cb) {
+	      // CALLBACK ONE EVERYTHING IS LOADED
 	      var self = this;
 
 	      // MAX SECS / REFRESH RATE = HOW MANY TIMES WE CAN TRY TRY
 	      var fail = self.loaded.fail / self.loaded.refresh;
 
 	      if (self.loaded.success) {
-	        if (typeof cb === 'function') cb();
+	        if (typeof cb === 'function') {
+	          (function () {
+	            cb.call(self);
+	          })(cb);
+	        }
 	      } else if (!self.loaded.success && self.loaded.attempts < fail) {
 	        self.loaded.attempts++;
 	        setTimeout(function () {
@@ -2675,7 +2810,7 @@ var Daft =
 	          }
 	        }, self.loaded.refresh);
 	      } else {
-	        cb({
+	        cb(self, {
 	          msg: 'Failed to finish loading ' + self.namespace + ' namespace after ' + self.loaded.fail / 1000 + ' seconds'
 	        });
 	      }
@@ -3062,8 +3197,8 @@ var Daft =
 	    // CHECK IF A NAMESPACE EXISTS, AND RETURN THE OBJECT IF IT DOES
 
 	    // IF NAMESPACE EXISTS
-	    if (_typeof(Daft.NS[namespace]) === 'object') {
-	      return Daft.NS[namespace];
+	    if (_typeof(Daft.App[namespace]) === 'object') {
+	      return Daft.App[namespace];
 	      // IF NAMESPACE DOES NOT EXIST
 	    } else {
 	        return false;
@@ -3107,7 +3242,7 @@ var Daft =
 
 	    var args = [];
 	    var func = false;
-	    var obj = window.Daft.NS[NS.namespace.namespace];
+	    var obj = window.Daft.App[NS.namespace.namespace];
 
 	    // IF ACTUAL FUNCTION WAS PASSED & NOT JUST A NAME OF A FUNCTION
 	    if (fn !== null && fn.indexOf('(') > 0) {
@@ -3161,7 +3296,7 @@ var Daft =
 	        if (updateFunction.run !== false) {
 	          var updateData = {
 	            el: mutation.target.parentElement,
-	            data: mutation.target.nodeValue,
+	            value: mutation.target.nodeValue,
 	            key: dataKey,
 	            previous: mutation.oldValue,
 	            mutation: mutation
@@ -3183,7 +3318,7 @@ var Daft =
 	          }
 
 	          // APPLY FUNCTION
-	          if (typeof updateFunction.run === 'function') updateFunction.run.apply(this, updateFunction.arguments);
+	          if (typeof updateFunction.run === 'function') updateFunction.run.apply(NS.namespace, updateFunction.arguments);
 	        }
 	      }
 	    }
@@ -3192,9 +3327,9 @@ var Daft =
 	      dataKey = NS.attributes[NS.namespace.namespace + '-data'].value;
 
 	      // UPDATE OBJECT WITH NEW VALUE
-	      Daft.NS[NS.namespace.namespace].domData[dataKey].data = mutation.target.nodeValue;
+	      Daft.App[NS.namespace.namespace].domData[dataKey].value = mutation.target.nodeValue;
 	      // AND PREVIOUS VALUE
-	      Daft.NS[NS.namespace.namespace].domData[dataKey].previous = mutation.oldValue;
+	      Daft.App[NS.namespace.namespace].domData[dataKey].previous = mutation.oldValue;
 	    }
 	  }
 

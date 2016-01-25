@@ -8,8 +8,8 @@ module.exports = function (attrs) {
   // CHECK IF A NAMESPACE EXISTS, AND RETURN THE OBJECT IF IT DOES
 
     // IF NAMESPACE EXISTS
-    if (typeof Daft.NS[namespace] === 'object') {
-      return Daft.NS[namespace]
+    if (typeof Daft.App[namespace] === 'object') {
+      return Daft.App[namespace]
     // IF NAMESPACE DOES NOT EXIST
     } else {
       return false
@@ -53,7 +53,7 @@ module.exports = function (attrs) {
 
     var args = []
     var func = false
-    var obj = window.Daft.NS[NS.namespace.namespace]
+    var obj = window.Daft.App[NS.namespace.namespace]
 
     // IF ACTUAL FUNCTION WAS PASSED & NOT JUST A NAME OF A FUNCTION
     if (fn !== null && fn.indexOf('(') > 0) {
@@ -106,7 +106,7 @@ module.exports = function (attrs) {
         if (updateFunction.run !== false) {
           var updateData = {
             el: mutation.target.parentElement,
-            data: mutation.target.nodeValue,
+            value: mutation.target.nodeValue,
             key: dataKey,
             previous: mutation.oldValue,
             mutation: mutation
@@ -128,7 +128,7 @@ module.exports = function (attrs) {
           }
 
           // APPLY FUNCTION
-          if (typeof updateFunction.run === 'function') updateFunction.run.apply(this, updateFunction.arguments)
+          if (typeof updateFunction.run === 'function') updateFunction.run.apply(NS.namespace, updateFunction.arguments)
         }
       }
     }
@@ -137,9 +137,10 @@ module.exports = function (attrs) {
       dataKey = NS.attributes[NS.namespace.namespace + '-data'].value
 
       // UPDATE OBJECT WITH NEW VALUE
-      Daft.NS[NS.namespace.namespace].domData[dataKey].data = mutation.target.nodeValue
+      console.log('new value', mutation.target.nodeValue)
+      Daft.App[NS.namespace.namespace].domData[dataKey].value = mutation.target.nodeValue
       // AND PREVIOUS VALUE
-      Daft.NS[NS.namespace.namespace].domData[dataKey].previous = mutation.oldValue
+      Daft.App[NS.namespace.namespace].domData[dataKey].previous = mutation.oldValue
     }
   }
 

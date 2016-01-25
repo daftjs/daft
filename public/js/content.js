@@ -4,17 +4,23 @@ window.define(function (require) {
 
   // ON LOAD
   Content.onload(function () {
-    var domData = Daft.NS.content.domData
+    var self = this
+    var data = self.domData
 
     Daft.info('Content namespace loaded')
 
     setTimeout(function () {
-      domData.message.data = 'message updated!'
+      // data.message.value = 'message updated!!!'
     }, 2000)
 
     // ON UPDATE FUNCTION FOR TITLE
-    Content.onTitleUpdate = function () {
-      console.log('Content.onTitleUpdate()')
+    Content.nameChange = function (response) {
+      console.log('response', response)
+      if (response.value !== '') {
+        data.greeting.value = 'Great, I shall call you...' + response.value + '!'
+      } else {
+        data.greeting.value = 'Please enter your name above so I know what to call you!'
+      }
     }
   })
 })
