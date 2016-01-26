@@ -14,5 +14,7 @@ require(['js/daft.js'], function () {
   Daft.ready(function () {
     require(['js/header.js'])
     require(['js/content.js'])
+
+    // var Pet = new Daft.Namespace('Pet')
   })
 })

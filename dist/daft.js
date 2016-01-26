@@ -390,9 +390,9 @@ var Daft =
 
 	var css = _interopRequireWildcard(_css);
 
-	var _data = __webpack_require__(14);
+	var _domData = __webpack_require__(14);
 
-	var data = _interopRequireWildcard(_data);
+	var data = _interopRequireWildcard(_domData);
 
 	var _domIndex = __webpack_require__(15);
 
@@ -2672,12 +2672,13 @@ var Daft =
 		}
 	}
 
-	// CREATES A NEW NAPESPACE
 	var WatchJS = __webpack_require__(26);
 	var Watch = WatchJS.watch;
 	var Daft = Daft || window.Daft;
 	var Dom = __webpack_require__(5);
 	var Utility = __webpack_require__(4);
+
+	// CREATES A NEW NAPESPACE
 
 	var Namespace = function () {
 		function Namespace(namespace, userData, cb) {
@@ -2687,6 +2688,8 @@ var Daft =
 			var Watcher = __webpack_require__(27)([namespace + '-data']);
 
 			namespace = namespace.toLowerCase();
+
+			if (!verify(namespace)) return false; // VERIFY THAT NAMESPACE EXISTS
 
 			self.loaded = {
 				attempts: 0, // HOW MANY TIMES WE'VE TRIED TO FIRE LOAD EVENT
@@ -2721,6 +2724,17 @@ var Daft =
 							});
 						}
 					});
+				}
+			}
+
+			function verify(namespace) {
+				var wrapper = Dom('[namespace="' + namespace + '"]');
+
+				if (wrapper.length < 1) {
+					throwError('invalidNamespace');
+					return false;
+				} else {
+					return wrapper;
 				}
 			}
 
@@ -2849,11 +2863,15 @@ var Daft =
 			}
 
 			function throwError(which, data) {
-				var messages = [];
+				// ERROR HANDLER FOR NAMESPACE
 
-				messages.noRoot = console.error('Error populating ' + data.prop + ' data:\n\n' + 'Found multiple elements with "' + data.prop + '" data in "' + namespace + '" namespace, and could not determine default value. If you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in data object when creating the namespace:\n' + 'data: {\n' + '  ' + data.prop + ': {\n' + '    value: "hello world"\n' + '  }\n' + '}\n\n' + 'Alternatively, if you want to pull the default data from the dom, you can add a data-init attribute to one (and only one!) of these elements.');
+				if (which === 'invalidNamespace') {
+					return Daft.error('Failed to initiate namespace for ' + namespace + '. Could not find a valid container.' + 'Please make sure your namespace has a parent container with an attribute of namespace="' + namespace + '"');
+				}
 
-				return messages[which];
+				if (which === 'noRoot') {
+					return Daft.error('Error populating ' + data.prop + ' data:\n\n' + 'Found multiple elements with "' + data.prop + '" data in "' + namespace + '" namespace, and could not determine default value. If you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in data object when creating the namespace:\n' + 'data: {\n' + '  ' + data.prop + ': {\n' + '    value: "hello world"\n' + '  }\n' + '}\n\n' + 'Alternatively, if you want to pull the default data from the dom, you can add a data-init attribute to one (and only one!) of these elements.');
+				}
 			}
 
 			function populateData(elements) {
@@ -3425,14 +3443,11 @@ var Daft =
 			// CHECK IF A FUNCTION EXISTS IN: namespace.function
 			if (typeof obj[fn] === 'function') {
 				func = obj[fn];
-				// CHECK IF A FUNCTION EXISTS IN: namespace.function
-			} else if (typeof obj.actions[fn] === 'function') {
-					func = obj.actions[fn];
-					// CHECK IF A FUNCTION EXISTS IN GLOBAL NAMESPACE
-				} else if (typeof window[fn] === 'function') {
-						func = window[fn];
-						console.warn('WARNING:', fn + ' function exists as a global. You should define it as a part of your ' + NS.namespace.name + ' namespace instead: http://docs.daftjs.com/namespace/functions');
-					}
+				// CHECK IF A FUNCTION EXISTS IN GLOBAL NAMESPACE
+			} else if (typeof window[fn] === 'function') {
+					func = window[fn];
+					console.warn('WARNING:', fn + ' function exists as a global. You should define it as a part of your ' + NS.namespace.name + ' namespace instead: http://docs.daftjs.com/namespace/functions');
+				}
 
 			return {
 				run: func,

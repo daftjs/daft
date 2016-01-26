@@ -1,17 +1,21 @@
-// CREATES A NEW NAPESPACE
-var WatchJS = require('watchjs')
-var Watch = WatchJS.watch
-var Daft = Daft || window.Daft
-var Dom = require('domtastic')
-var Utility = require('./utility.js')
+'use strict'
 
+const WatchJS = require('watchjs')
+const Watch = WatchJS.watch
+const Daft = Daft || window.Daft
+const Dom = require('domtastic')
+const Utility = require('./utility.js')
+
+// CREATES A NEW NAPESPACE
 class Namespace {
 
   constructor (namespace, userData, cb) {
-    var self = this
-    var Watcher = require('./watcher')([namespace + '-data'])
+    let self = this
+    const Watcher = require('./watcher')([namespace + '-data'])
 
     namespace = namespace.toLowerCase()
+
+    if (!verify(namespace)) return false // VERIFY THAT NAMESPACE EXISTS
 
     self.loaded = {
       attempts: 0, // HOW MANY TIMES WE'VE TRIED TO FIRE LOAD EVENT
@@ -24,20 +28,20 @@ class Namespace {
     userData = userData || {}
 
     // ADD USER DATA TO NAMESPACE
-    for (var key in userData) {
+    for (let key in userData) {
       self[key] = userData[key]
     }
 
     function watchData (scope, elements) {
     // WATCH FOR CHANGES TO DOM DATA OBJECT
 
-      for (var key in elements) {
+      for (let key in elements) {
         elements[key].forEach(function (el, key) {
-          var element = el.element
+          let element = el.element
 
           if (typeof scope.data[el.key] !== 'undefined') {
             Watch(scope.data[el.key], function () {
-              var val = scope.data[el.key].value
+              let val = scope.data[el.key].value
               if (typeof element.type !== 'undefined') {
                 Daft.dom(element).value(val)
               } else {
@@ -49,11 +53,22 @@ class Namespace {
       }
     }
 
+    function verify (namespace) {
+      let wrapper = Dom('[namespace="' + namespace + '"]')
+
+      if (wrapper.length < 1) {
+        throwError('invalidNamespace')
+        return false
+      } else {
+        return wrapper
+      }
+    }
+
     // GET ALL CUSTOM DOM TAGS FOR NAMESPACE: <namespace-key>
     function registerTags (namespace) {
-      var elements = Dom('[namespace="' + namespace + '"] *')
-      var tags = []
-      var skip = false
+      let elements = Dom('[namespace="' + namespace + '"] *')
+      let tags = []
+      let skip = false
 
       elements = Array.prototype.slice.call(elements).filter(function (el) {
         return el.localName.indexOf('-') !== -1 || el.getAttribute('is')
@@ -61,9 +76,9 @@ class Namespace {
 
       // LOOP THROUGH EACH CUSTOM ELEMENT
       elements.forEach(function (el, key) {
-        var attrs = el.localName.split('-')
+        let attrs = el.localName.split('-')
 
-        var root = false
+        let root = false
 
         if (el.attributes['data-init']) root = true
 
@@ -99,7 +114,7 @@ class Namespace {
     function populateDomData () {
       self.data = {}
 
-      var domTags = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]')
+      let domTags = Dom('[namespace="' + namespace + '"]').find('[' + namespace + '-data]')
 
       self.customTags = registerTags(namespace)
 
@@ -109,13 +124,13 @@ class Namespace {
     function data (tags, domTags) {
     // COMBINE DATA FROM CUSTOM ELEMENTS & DATA ATTRIBUTES
 
-      var elementCollection = []
-      var added = []
+      let elementCollection = []
+      let added = []
 
       // GET EACH STANDARD ELEMENT
       domTags.forEach(function (el) {
-        var root = false
-        var key = el.attributes[namespace + '-data'].value
+        let root = false
+        let key = el.attributes[namespace + '-data'].value
 
         if (el.attributes['data-init']) root = true
 
@@ -140,8 +155,8 @@ class Namespace {
       // GET EACH CUSTOM ELEMENT
       tags.forEach(function (element, key) {
         Daft.dom(element.tag).forEach(function (el) {
-          var root = false
-          var skip = false
+          let root = false
+          let skip = false
 
           if (el.attributes['data-init']) root = true
 
@@ -172,32 +187,39 @@ class Namespace {
     }
 
     function throwError (which, data) {
-      var messages = []
+    // ERROR HANDLER FOR NAMESPACE
 
-      messages.noRoot = console.error('Error populating ' + data.prop + ' data:\n\n' +
-      'Found multiple elements with "' + data.prop + '" data in "' + namespace + '" namespace, and could not determine default value. If you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in data object when creating the namespace:\n' +
-      'data: {\n' +
-      '  ' + data.prop + ': {\n' +
-      '    value: "hello world"\n' +
-      '  }\n' +
-      '}\n\n' +
-      'Alternatively, if you want to pull the default data from the dom, you can add a data-init attribute to one (and only one!) of these elements.')
+      if (which === 'invalidNamespace') {
+        return Daft.error(
+          'Failed to initiate namespace for ' + namespace + '. Could not find a valid container.' +
+          'Please make sure your namespace has a parent container with an attribute of namespace="' + namespace + '"'
+        )
+      }
 
-      return messages[which]
+      if (which === 'noRoot') {
+        return Daft.error('Error populating ' + data.prop + ' data:\n\n' +
+        'Found multiple elements with "' + data.prop + '" data in "' + namespace + '" namespace, and could not determine default value. If you wish to use the same key to bind data to multiple elements, please be sure to specify a default value in data object when creating the namespace:\n' +
+        'data: {\n' +
+        '  ' + data.prop + ': {\n' +
+        '    value: "hello world"\n' +
+        '  }\n' +
+        '}\n\n' +
+        'Alternatively, if you want to pull the default data from the dom, you can add a data-init attribute to one (and only one!) of these elements.')
+      }
     }
 
     function populateData (elements) {
     // POPULATE DATA FROM DOM ELEMENTS
 
-      for (var key in elements) {
-        var qty = elements[key].length
-        var root = false
-        var jsData = false
+      for (let key in elements) {
+        let qty = elements[key].length
+        let root = false
+        let jsData = false
 
         elements[key].forEach(function (el, key) {
-          var element = el.element
-          var prop = el.key
-          var value = ''
+          let element = el.element
+          let prop = el.key
+          let value = ''
 
           if (qty === 1 || el.root === true) {
             if (typeof element.type !== 'undefined' && element.value !== '') value = element.value
@@ -261,11 +283,11 @@ class Namespace {
     function setData (self, elements) {
     // SET DOM DATA FOR EACH ELEMENT
 
-      for (var key in elements) {
+      for (let key in elements) {
         elements[key].forEach(function (el, key) {
-          var element = Daft.dom(el.element)[0]
+          let element = Daft.dom(el.element)[0]
           if (typeof self.data[el.key] !== 'undefined') {
-            var val = self.data[el.key].value
+            let val = self.data[el.key].value
             if (typeof element.type !== 'undefined') {
               Daft.dom(element).value(val)
             } else {
@@ -296,10 +318,10 @@ class Namespace {
 
   onload (cb) {
   // CALLBACK ONE EVERYTHING IS LOADED
-    var self = this
+    let self = this
 
     // MAX SECS / REFRESH RATE = HOW MANY TIMES WE CAN TRY TRY
-    var fail = self.loaded.fail / self.loaded.refresh
+    let fail = self.loaded.fail / self.loaded.refresh
 
     if (self.loaded.success) {
       if (typeof cb === 'function') {
