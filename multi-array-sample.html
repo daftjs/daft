@@ -1,0 +1,75 @@
+// HTML
+<!-- MULTI-DIMENSIONAL DATA -->
+<content-animals id="arrayContent" daft-loop content-data="menu" loop-attributes="href, value">
+  <pet-container loop-item="cat">
+    <a href="#/cat" item-data="link" daft-track="href">
+      <img src="http://daftjs.com/img/cat.jpg" alt="the cat" daft-track="src, alt" item-data="img" />
+      <h4 item-data="greeting">Hello, my name is <span item-data="name">Tom</span>.</h4>
+    </a>
+  </pet-container>
+  <pet-container loop-item="mouse">
+    <a href="#/mouse" item-data="link" daft-track="href">
+      <img src="http://daftjs.com/img/mouse.jpg" alt="the mouse" daft-track="src, alt" item-data="img" />
+      <h4 item-data="greeting">Hello, my name is <span item-data="name">Jerry</span>.</h4>
+    </a>
+  </pet-container>
+</content-animals>
+
+
+
+// JAVASCRIPT
+let container = Daft.dom('content-animals')
+
+function data (el) {
+  let elements = Daft.dom(el).find('[item-data]')
+  let data = {}
+
+  elements.forEach(function (element, count) {
+    if (element.attributes['item-data']) {
+      if (element.attributes['daft-track']) {
+        let track = element.attributes['daft-track'].value.toLowerCase()
+        track = track.split(' ').join('')
+        track = track.split(',')
+
+        let itemData = {}
+
+        track.forEach(function (value) {
+          if (element.attributes[value]) itemData[value] = element.attributes[value].nodeValue
+          itemData.value = element.innerHTML
+          itemData.text = element.innerText
+        })
+
+        data[element.attributes['item-data'].value] = {
+          element: element,
+          tag: element.localName,
+          value: itemData
+        }
+      } else {
+        data[element.attributes['item-data'].value] = {
+          element: element,
+          html: element.innerHTML,
+          tag: element.localName,
+          text: element.innerText
+        }
+      }
+      // data.length = count
+    }
+  })
+  return data
+}
+
+function children (parent) {
+  let elements = parent.children()
+  let collection = []
+
+  elements.forEach(function (element) {
+    collection.push(data(element))
+  })
+  return collection
+}
+
+let items = children(container)
+
+Daft.myApp.Content.data.animals.value = items
+
+// console.log('Animals', items)

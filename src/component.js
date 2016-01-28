@@ -6,8 +6,8 @@ const Daft = Daft || window.Daft;
 const Dom = require('domtastic');
 const Utility = require('./utility.js');
 
-// CREATES A NEW NAPESPACE
-class Namespace {
+// CREATES A NEW COMPONENT
+class Component {
 
   constructor (component, userData, cb) {
     let self = this;
@@ -46,14 +46,12 @@ class Namespace {
               if (typeof element.type !== 'undefined' && element.type !== '') {
                 Daft.dom(element).value(val);
               } else {
-                Daft.log('el', scope.data[el.key]);
                 if (typeof val === 'string') {
                   Dom(element).html(val);
                 } else {
                   let arrayData = '';
                   val.forEach(function (value) {
-                    Daft.log(value);
-                    arrayData = arrayData + '<' + tag + ' daft-item>';
+                    arrayData = arrayData + '<' + tag + ' ' + Daft.attributes.loopItem + '>';
                     arrayData = arrayData + value;
                     arrayData = arrayData + '</' + tag + '>';
                   });
@@ -116,7 +114,6 @@ class Namespace {
           }
 
           if (!skip) Dom(el).attr(component + Daft.attributes.data, el.localName.split(attrs[0] + '-')[1]);
-
         }
 
         // REGISTER ELEMENTS WITH THE DOM
@@ -216,7 +213,6 @@ class Namespace {
           });
 
           if (!skip) {
-          //   Daft.log('add', element)
             elementCollection[element.key].push({
               element: el,
               key: element.key,
@@ -336,46 +332,14 @@ class Namespace {
       let arrayData = '';
 
       userData.data[prop].value.forEach(function (value) {
-        Daft.info('user data loop');
         // IF USER HAS SUPPLIED A TEMPLATE
         if (typeof userData.data[prop].template !== 'undefined') {
-          let template = userData.data[prop].template;
-
-          Daft.log('total items ' + userData.data[prop].value.length);
-
-          for (let item in userData.data[prop].value) {
-            let keys = Object.getOwnPropertyNames(userData.data[prop].value[item]);
-            let data = userData.data[prop].value[item];
-            let templateData = template;
-
-            Daft.log('- - - - - - - ');
-            Daft.log('number: ' + item);
-            // Daft.log('key: ' + key[item]);
-            Daft.log('item: ', data);
-
-            keys.forEach(function (keyItem) {
-              Daft.log('key', keyItem);
-              Daft.log('value', data[keyItem]);
-              templateData = templateData.split('{{' + keyItem + '}}').join(data[keyItem]);
-              Daft.log('template: ', templateData);
-            });
-
-            arrayData = arrayData + templateData;
-            Daft.log('array data: ', arrayData);
-
-            Daft.log('- - - - - - - ');
-
-            // template = template.split('{{' + key[item] + '}}').join(value[key[item]])
-          }
-
-          // arrayData = arrayData + template
-        // IF
+        // IF WE'RE USING RAW DATA
         } else {
           if (typeof value === 'object') {
-            Daft.log('object value');
             value = value[userData.data[prop].key];
           }
-          arrayData = arrayData + '<' + userData.data[prop].tag + ' daft-item>';
+          arrayData = arrayData + '<' + userData.data[prop].tag + '' + Daft.attributes.loopItem + '>';
           arrayData = arrayData + value;
           arrayData = arrayData + '</' + userData.data[prop].tag + '>';
           self.data[prop].tag = userData.data[prop].tag;
@@ -383,7 +347,6 @@ class Namespace {
       });
 
       Dom(element).html(arrayData);
-
     }
 
     function setData (self, elements) {
@@ -420,7 +383,6 @@ class Namespace {
     self.observer = new Watcher.Observe(self.container);
 
     self.loaded.success = true; // INFORM ONLOAD FUNCTION WE'RE ALL FINISHED
-
   }
 
   onload (cb) {
@@ -452,4 +414,4 @@ class Namespace {
 
 }
 
-module.exports = Namespace;
+module.exports = Component;

@@ -1,20 +1,16 @@
-'use strict'
+'use strict';
 
-var require = window.requirejs
+var require = window.requirejs;
 
 require(['js/daft.js'], function () {
-  var Daft = window.Daft
+  var Daft = window.Daft;
 
   // INITIALIZE A NEW APP
-  Daft.create('myApp', {
-    other: 'daft'
-  })
+  Daft.app('Daft');
 
   // ONCE THE PAGE IS READY
   Daft.ready(function () {
-    require(['js/header.js'])
-    require(['js/content.js'])
-
-    // var Pet = new Daft.Namespace('Pet')
-  })
-})
+    require(['js/header.js']);
+    require(['js/content.js']);
+  });
+});

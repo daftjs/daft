@@ -1,7 +1,4 @@
-var path = require('path')
-// var webpack = require('webpack')
-
-console.log('DIR: ' + path.join(__dirname, 'dist'))
+var path = require('path');
 
 module.exports = {
   cache: true,
@@ -25,7 +22,5 @@ module.exports = {
   },
   resolve: {
     alias: {}
-  },
-  plugins: [
-  ]
-}
+  }
+};

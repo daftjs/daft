@@ -43,3 +43,17 @@ input {
   box-sizing: border-box;
   padding: 10px;
 }
+
+li {
+  list-style: none;
+}
+
+img {
+  max-width: 200px;
+}
+
+
+list-item, pet-container {
+  display: block;
+  padding: 5px;
+}

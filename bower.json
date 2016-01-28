@@ -28,5 +28,8 @@
     "package.json",
     "webpack.config.js",
     "CHANGELOG.md"
-  ]
+  ],
+  "dependencies": {
+    "pegasus": "~0.3.2"
+  }
 }

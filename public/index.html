@@ -5,32 +5,17 @@
     <title>Daft.js</title>
     <link rel="stylesheet" href="/css/daft.css">
     <script data-main="js/bootstrap.js" src="lib/require.js"></script>
+    <script src="lib/pegasus.js"></script>
+    <script src="lib/jade.min.js"></script>
   </head>
   <body>
 
     <!-- HEADER NAMESPACE -->
-    <header namespace="header">
-      <h1 data-init header-data="title" daft-update="onTitleUpdate">Daft.js</h1>
-    </header>
+    <!-- <daft-include src="test.jade"></daft-include> -->
 
-    <!-- CONTENT NAMESPACE -->
-    <section namespace="content">
+    <daft-include src="header.jade"></daft-include>
+    <daft-include src="content.jade"></daft-include>
 
-      <h2>Hello, my name is: <content-name data-init contentEditable="true" daft-update="nameChange">Jane Doe</content-name></h2>
-      <content-greeting>Please enter your name above so I know what to call you!</content-greeting>
-
-      <br><br><br><br>
-
-      <content-status>loading...</content-status>
-
-      <!-- <label for="arrayContent">Array Content</label>
-      <ul id="arrayContent" daft-list content-data="list">
-        <li daft-item>Item 1</li>
-        <li daft-item>Item 2</li>
-        <li daft-item>Item 3</li>
-      </ul> -->
-
-    </section>
 
   </body>
 </html>

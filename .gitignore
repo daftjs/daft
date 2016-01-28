@@ -6,3 +6,4 @@
 client/_dist/
 client/_bower/
 node_modules/
+bower_components/

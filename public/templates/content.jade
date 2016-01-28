@@ -1,0 +1,10 @@
+<!-- CONTENT NAMESPACE -->
+section(component="content")
+  h2
+    | Hello, my name is:
+    content-name(data-init, contentEditable="true", daft-update="nameChange") Jane Doe
+  content-greeting Please enter your name above so I know what to call you!
+
+  br
+
+  content-status loading...

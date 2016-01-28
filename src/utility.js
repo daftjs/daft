@@ -4,33 +4,33 @@ module.exports = {
   // FALLS BACK TO DEFAULTS IF NOT DEFINED
 
     if (typeof keys === 'undefined') {
-      keys = ''
+      keys = '';
     } else {
-      keys = keys + '.'
+      keys = keys + '.';
     }
 
     // keys = ''
 
     for (var key in settings) {
-      var item = settings[key]
+      var item = settings[key];
       if (typeof item === 'object') {
-        this.bootstrap(item, opt, key)
+        this.bootstrap(item, opt, key);
       } else {
-        keys = keys + key
-        this.setObjectValue(settings, keys, this.extractObjectValue(opt, keys))
-        keys = ''
+        keys = keys + key;
+        this.setObjectValue(settings, keys, this.extractObjectValue(opt, keys));
+        keys = '';
       }
     }
   },
 
   capitalize: function (str) {
     return str.replace(/(?:^|\s)\S/g, function (a) {
-      return a.toUpperCase()
-    })
+      return a.toUpperCase();
+    });
   },
 
   setNamespace: function (name) {
-    return this.capitalize(name)
+    return this.capitalize(name);
   },
 
   setObjectValue: function (obj, keys, value) {
@@ -38,17 +38,17 @@ module.exports = {
 
     if (typeof value !== 'undefined') {
       if (typeof keys === 'string') {
-        keys = keys.split('.')
+        keys = keys.split('.');
       }
-      var last = keys.pop()
+      var last = keys.pop();
       for (var i in keys) {
         if (!obj.hasOwnProperty(keys[i])) {
-          break
+          break;
         }
-        obj = obj[keys[i]]
+        obj = obj[keys[i]];
       }
       if (obj.hasOwnProperty(last)) {
-        obj[last] = value
+        obj[last] = value;
       }
     }
   },
@@ -57,18 +57,18 @@ module.exports = {
   // EXTRACT VALUE OF OBJECT BASED ON STRINGIFIED KEY
 
     if (typeof keys === 'string') {
-      keys = keys.split('.')
+      keys = keys.split('.');
     }
-    var last = keys.pop()
+    var last = keys.pop();
     for (var i in keys) {
       if (!obj.hasOwnProperty(keys[i])) {
-        break
+        break;
       }
-      obj = obj[keys[i]]
+      obj = obj[keys[i]];
     }
     if (obj.hasOwnProperty(last)) {
-      return obj[last]
+      return obj[last];
     }
   }
 
-}
+};

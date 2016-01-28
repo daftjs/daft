@@ -1,26 +1,25 @@
-window.define(function (require) {
-  var Daft = window.Daft
+'use strict';
 
-  var Content = new Daft.Namespace('content', {
-    data: {
-      status: {
-        value: 'Page loaded.'
-      }
-    }
-  })
+window.define(function (require) {
+  let Daft = window.Daft;
+  let Content = new Daft.Component('content');
 
   // ON LOAD
   Content.onload(function () {
-    var self = this
-    var data = self.data
+    let self = this;
+    let data = self.data;
+
+    data.status.value = 'Page loaded.';
 
     // ON UPDATE FUNCTION FOR TITLE
     Content.nameChange = function (response) {
       if (response.value !== '') {
-        data.greeting.value = 'Great, I shall call you...' + response.value + '!'
+        data.greeting.value = 'Great, I shall call you...' + response.value + '!';
       } else {
-        data.greeting.value = 'Please enter your name above so I know what to call you!'
+        data.greeting.value = 'Please enter your name above so I know what to call you!';
       }
-    }
-  })
-})
+    };
+  });
+});
+
+// Daft.myApp.Content.data['user-list'].value = ['Home', 'Contact', 'Links']
